@@ -8,7 +8,7 @@
 * [x] Import Inters Full history
 * [x] Automated tests
 * [x] Lint
-* [ ] Github
+* [x] Github
 * [ ] Add categorization of transaction
 * [ ] Add encapsulation (isolate spending by user context)
 * [ ] Avoid duplication (maybe using the date)

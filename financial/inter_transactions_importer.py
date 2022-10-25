@@ -1,7 +1,8 @@
+import db
 import pandas as pd
 
 from pandas import DataFrame
-from sqlalchemy import create_engine
+
 from financial.user import User
 
 BANK = "077"
@@ -58,16 +59,15 @@ class InterTransactionsImporter:
         return self.df
 
     def __save_df(self) -> None:
-        engine = create_engine("mysql+pymysql://" +
-                               "financial:pass123@localhost/financial")
-        conn = engine.connect()
+        engine = db.get_engine()
+        mysql_connection = engine.connect()
 
         try:
             self.df.to_sql(name='transactions',
-                           con=engine,
+                           con=mysql_connection,
                            if_exists='append',
                            index=False)
         except Exception as e:
             print(f'Error while save data to db. {e}')
         finally:
-            conn.close()
+            mysql_connection.close()

@@ -4,7 +4,7 @@
 * [x] Try catch
 * [x] Separate data NORMALIZATION from LOAD and PERSISTENCE
 * [x] Organize classes and methods
-* [ ] `IGNORED` Import Nubank
+* [ ] `IGNORED` Import Nubank `Nubank has not an statement becouse I use it only for credit card`
 * [x] Import Inters Full history
 * [x] Automated tests
 * [x] Lint

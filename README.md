@@ -9,6 +9,7 @@
 * [x] Automated tests
 * [x] Lint
 * [x] Github
+* [x] `bonus` REPL
 * [ ] Add categorization of transaction
 * [ ] Add encapsulation (isolate spending by user context)
 * [ ] Avoid duplication (maybe using the date)

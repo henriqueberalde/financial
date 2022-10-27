@@ -13,16 +13,16 @@
 * [x] Github
 * [x] `bonus` REPL
 * [x] Add categorization of transaction
-* [x] Add encapsulation (isolate spending by user context)
-* [x] Add category rules (automatic set category)
+* [x] Add encapsulation `isolate spending by user context`
+* [x] Add category rules `automatic set category`
 * [ ] Update unit tests
 * [ ] Split import table from transactions table
 * [ ] Make import command cleanup tthe table after execution
 * [ ] Reprocess categorization transactions
 * [ ] Run reprocess categorization after create or update category or category_rule
-* [ ] Import part statement (avoid duplication using the date)
-* [ ] Add categorization per transaction (in separated table because of the reprocessment of categorization)
-* [ ] Statement report by date (begin and end)
-* [ ] Grouped statement report by date (begin and end)
-* [ ] Grouped graph report (many months)
+* [ ] Import part statement `avoid duplication using the date`
+* [ ] Add categorization per transaction `in separated table because of the reprocessment of categorization`
+* [ ] Statement report by date `begin and end`
+* [ ] Grouped statement report by date `begin and end`
+* [ ] Grouped graph report `many months`
 

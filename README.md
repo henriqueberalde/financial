@@ -1,3 +1,5 @@
+# TODO
+
 * [x] Add bank column
 * [x] Receive file_path, user_id, user_account and bank as input
 * [x] Log messages
@@ -12,5 +14,15 @@
 * [x] `bonus` REPL
 * [x] Add categorization of transaction
 * [x] Add encapsulation (isolate spending by user context)
-* [ ] Add category rules (automatic set category)
-* [ ] `CANCELLED` Avoid duplication (maybe using the date)
+* [x] Add category rules (automatic set category)
+* [ ] Update unit tests
+* [ ] Split import table from transactions table
+* [ ] Make import command cleanup tthe table after execution
+* [ ] Reprocess categorization transactions
+* [ ] Run reprocess categorization after create or update category or category_rule
+* [ ] Import part statement (avoid duplication using the date)
+* [ ] Add categorization per transaction (in separated table because of the reprocessment of categorization)
+* [ ] Statement report by date (begin and end)
+* [ ] Grouped statement report by date (begin and end)
+* [ ] Grouped graph report (many months)
+

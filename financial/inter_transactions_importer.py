@@ -1,5 +1,3 @@
-import errno
-from xmlrpc.client import boolean
 import db
 import re
 import pandas as pd
@@ -8,7 +6,6 @@ from pandas import DataFrame
 from financial.category import Category
 from financial.category_rule import CategoryRule
 from financial.normalize_error import NormalizeError
-
 from financial.user import User
 
 BANK = "077"

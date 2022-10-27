@@ -1,4 +1,5 @@
 import click
+import financial.db as db
 
 from distutils.cmd import Command
 from distutils.dist import Distribution
@@ -6,6 +7,8 @@ from click_repl import register_repl
 from financial.inter_transactions_importer import InterTransactionsImporter
 from financial.user import User
 from financial.transaction import Transaction
+from financial.category import Category
+from financial.category_rule import CategoryRule
 
 
 @click.group()
@@ -54,6 +57,29 @@ def set_context(c: str, ids: str) -> None:
     """Set context of a list of transactions"""
 
     Transaction.set_context_of_many(ids, c)
+
+    print('\ndone')
+
+
+@cli.command()
+@click.option("-name", prompt="Name", help="Category`s name")
+def create_category(name: str) -> None:
+    """Create a category with the name"""
+
+    Category(name=name).save()
+
+    print('\ndone')
+
+
+@cli.command()
+@click.option("-category_name", prompt="Category", help="Category`s name")
+@click.option("-rule", prompt="Rule <regex>", help="Rule as regex")
+def create_category_rule(category_name: str, rule: str) -> None:
+    """Create a rule as a regex expression for categorize a transaction"""
+    session = db.get_session()
+    category = session.query(Category).filter_by(name=category_name).one()
+
+    CategoryRule(category_id=category.id, rule=rule).save()
 
     print('\ndone')
 

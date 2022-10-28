@@ -1,14 +1,12 @@
 import click
-import financial.db as db
+import financial.entities.db as db
 
-from distutils.cmd import Command
-from distutils.dist import Distribution
 from click_repl import register_repl
-from financial.inter_transactions_importer import InterTransactionsImporter
-from financial.user import User
-from financial.transaction import Transaction
-from financial.category import Category
-from financial.category_rule import CategoryRule
+from financial.inter.transactions_importer import TransactionsImporter
+from financial.entities.user import User
+from financial.entities.transaction import Transaction
+from financial.entities.category import Category
+from financial.entities.category_rule import CategoryRule
 
 
 @click.group()
@@ -33,19 +31,8 @@ def inter_import_statement(f: str, i: int, a: str, b: str) -> None:
     print(f'user_account:{user_account}')
     print(f'bank:{bank}')
 
-    importer = InterTransactionsImporter(User(user_id, user_account))
+    importer = TransactionsImporter(User(user_id, user_account))
     importer.import_from_csv(file_path)
-
-    print('\ndone')
-
-
-@cli.command()
-@click.option("-c", prompt="Category", help="transactions category")
-@click.option("-ids", prompt="Ids of transactions", help="Ids of transactions")
-def set_category(c: str, ids: str) -> None:
-    """Set category of a list of transactions"""
-
-    Transaction.set_category_of_many(ids, c)
 
     print('\ndone')
 

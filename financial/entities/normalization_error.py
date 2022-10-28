@@ -1,4 +1,4 @@
-class NormalizeError(Exception):
+class NormalizationError(Exception):
     def __init__(self, messages: list[str]):
         super().__init__(None)
         self.messages = messages

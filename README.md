@@ -15,7 +15,8 @@
 * [x] Add categorization of transaction
 * [x] Add encapsulation `isolate spending by user context`
 * [x] Add category rules `automatic set category`
-* [ ] Update unit tests
+* [x] Update unit tests not dependent from db
+* [ ] Update unit tests dependent from db
 * [ ] Split import table from transactions table
 * [ ] Make import command cleanup tthe table after execution
 * [ ] Reprocess categorization transactions
@@ -26,3 +27,35 @@
 * [ ] Grouped statement report by date `begin and end`
 * [ ] Grouped graph report `many months`
 
+* [ ] Avoid category duplication
+* [ ] On creating category rule select category by name cas insensitivity
+* [ ] Separate file load from data_frame manipulation
+* [ ] Remove "set X of many" feature
+* [ ] Use IMDB (in-memory database) for unit tests
+* [ ] DocString
+
+
+# UNIT TESTS
+
+* [ ] `inter_import_csv_load` Basic import test (depends on DB)
+* [ ] `inter_import_df_save` Basic (depends on DB)
+
+* [x] `data_frame` Create user id column
+* [x] `data_frame` Create user account column
+* [x] `data_frame` Create bank column
+* [x] `data_frame` Create category column
+* [x] `data_frame` format date column
+* [x] `data_frame_category` When category matches, set category column
+* [x] `data_frame_category` When no category matches, set category column as None
+* [x] `data_frame_category` When find more than 1 category matches, add Error
+* [x] `data_frame_category` When many category error, show them all thogether
+
+* [ ] `category_save` Basic (depends on DB)
+* [ ] `category_fetch_by_name` Basic (depends on DB)
+
+* [ ] `category_rule_save` Basic (depends on DB)
+* [ ] `category_rule_create` Happy flow (depends on DB)
+* [ ] `category_rule_create` When no category found, error (depends on DB)
+
+* [ ] `transaction_set_context` One (depends on DB)
+* [ ] `transaction_set_context` Many `separated by space` (depends on DB)

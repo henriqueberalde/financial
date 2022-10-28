@@ -1,12 +1,12 @@
 import pytest
 
-from financial.user import User
-from financial.inter_transactions_importer import InterTransactionsImporter
+from financial.entities.user import User
+from financial.inter.transactions_importer import TransactionsImporter
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def interImporterUser1():
     """
-    Instance of InterTransactionsImporter with id:1, account: user_account
+    Instance of Inter`s TransactionsImporter with id:1, account: user_account
     """
-    return InterTransactionsImporter(User(1, "user_account"))
+    return TransactionsImporter(User(1, "user_account"))

@@ -1,4 +1,4 @@
-import financial.db as db
+import financial.entities.db as db
 
 from sqlalchemy import Column, Integer, String
 

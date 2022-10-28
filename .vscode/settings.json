@@ -1,5 +1,10 @@
 {
     "python.analysis.typeCheckingMode": "basic",
     "python.defaultInterpreterPath": "/home/carlosberalde/.cache/pypoetry/virtualenvs/financial-MEo5Ce_Z-py3.10/bin/python",
-    "python.linting.pycodestyleEnabled": true
+    "python.linting.pycodestyleEnabled": true,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }

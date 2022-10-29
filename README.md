@@ -18,7 +18,7 @@
 * [x] Update unit tests not dependent from db
 * [ ] Update unit tests dependent from db
 * [ ] Split import table from transactions table
-* [ ] Make import command cleanup tthe table after execution
+* [ ] Make import command cleanup the table after execution
 * [ ] Reprocess categorization transactions
 * [ ] Run reprocess categorization after create or update category or category_rule
 * [ ] Import part statement `avoid duplication using the date`
@@ -59,3 +59,6 @@
 
 * [ ] `transaction_set_context` One (depends on DB)
 * [ ] `transaction_set_context` Many `separated by space` (depends on DB)
+
+<!-- DATA BASE SETUP FOR PYTEST -->
+<!-- https://smirnov-am.github.io/pytest-testing_database/ -->

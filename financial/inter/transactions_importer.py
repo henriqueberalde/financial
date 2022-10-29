@@ -1,6 +1,7 @@
 import financial.entities.db as db
 import pandas as pd
 
+from sqlalchemy.orm import Session
 from financial.base_transactions_importer import BaseTransactionsImporter
 from pandas import DataFrame as PandasDataFrame
 from financial.inter.data_frame import DataFrame as InterDataFrame
@@ -11,9 +12,10 @@ from financial.entities.user import User
 
 
 class TransactionsImporter(BaseTransactionsImporter):
-    def __init__(self, user) -> None:
+    def __init__(self, session: Session, user) -> None:
         super().__init__("077")
 
+        self.session = session
         self.data_frame: InterDataFrame
         self.user: User = user
         self.file_path: str
@@ -64,7 +66,7 @@ class TransactionsImporter(BaseTransactionsImporter):
         return df
 
     def __save_df(self) -> None:
-        engine = db.get_engine()
+        engine = self.session.get_bind()
         mysql_connection = engine.connect()
 
         try:
@@ -79,4 +81,4 @@ class TransactionsImporter(BaseTransactionsImporter):
 
     def __fetch_category_rules(self):
         if len(self.category_rules) == 0:
-            self.category_rules = CategoryRule.get_all()
+            self.category_rules = self.session.query(CategoryRule).all()

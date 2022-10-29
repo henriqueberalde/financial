@@ -1,12 +1,15 @@
 import click
 import financial.entities.db as db
 
+from sqlalchemy import delete
 from click_repl import register_repl
 from financial.inter.transactions_importer import TransactionsImporter
 from financial.entities.user import User
 from financial.entities.transaction import Transaction
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
+
+session = db.get_session()
 
 
 @click.group()
@@ -31,7 +34,7 @@ def inter_import_statement(f: str, i: int, a: str, b: str) -> None:
     print(f'user_account:{user_account}')
     print(f'bank:{bank}')
 
-    importer = TransactionsImporter(User(user_id, user_account))
+    importer = TransactionsImporter(session, User(user_id, user_account))
     importer.import_from_csv(file_path)
 
     print('\ndone')
@@ -43,7 +46,7 @@ def inter_import_statement(f: str, i: int, a: str, b: str) -> None:
 def set_context(c: str, ids: str) -> None:
     """Set context of a list of transactions"""
 
-    Transaction.set_context_of_many(ids, c)
+    Transaction.set_context_of_many(session, ids, c)
 
     print('\ndone')
 
@@ -53,7 +56,8 @@ def set_context(c: str, ids: str) -> None:
 def create_category(name: str) -> None:
     """Create a category with the name"""
 
-    Category(name=name).save()
+    session.add(Category(name=name))
+    session.commit()
 
     print('\ndone')
 
@@ -66,7 +70,18 @@ def create_category_rule(category_name: str, rule: str) -> None:
     session = db.get_session()
     category = session.query(Category).filter_by(name=category_name).one()
 
-    CategoryRule(category_id=category.id, rule=rule).save()
+    session.add(CategoryRule(category_id=category.id, rule=rule))
+    session.commit()
+
+    print('\ndone')
+
+
+@cli.command()
+def cleanup() -> None:
+    """Clean up transactions table on db"""
+    session = db.get_session()
+    session.execute(delete(Transaction))
+    session.commit()
 
     print('\ndone')
 

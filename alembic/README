@@ -1,0 +1,7 @@
+Generic single-database configuration.
+
+## Development Example
+```alembic -n development upgrade head```
+
+## Test Example
+```alembic -n test upgrade head```

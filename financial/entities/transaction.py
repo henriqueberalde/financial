@@ -1,6 +1,7 @@
 import financial.entities.db as db
 import numpy as np
 
+from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Iterable, List
@@ -23,9 +24,9 @@ class Transaction(db.Base):
     category = relationship("Category")
 
     @staticmethod
-    def set_context_of_many(ids: Iterable | str,
+    def set_context_of_many(session: Session,
+                            ids: Iterable | str,
                             column_parm: str) -> None:
-        session = db.get_session()
 
         try:
             session.query(Transaction).filter(

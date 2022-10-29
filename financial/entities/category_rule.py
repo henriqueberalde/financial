@@ -1,10 +1,8 @@
-from os import stat
 import financial.entities.db as db
-
 from typing import Any
 
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import Session, relationship
+from sqlalchemy.orm import relationship
 
 
 class CategoryRule(db.Base):
@@ -16,17 +14,8 @@ class CategoryRule(db.Base):
 
     category = relationship("Category")
 
-    def save(self):
-        session = Session(db.get_engine())
-        session.add(self)
-        session.commit()
-
     @staticmethod
-    def get_all() -> list[CategoryRule]:   # type: ignore
-        return db.get_session().query(CategoryRule).all()
-
-    @staticmethod
-    def distinct_categories(rules: list[CategoryRule]):  # type: ignore
+    def distinct_categories(rules: list["CategoryRule"]):  # type: ignore
         distinct_categories: list[str] = []
 
         for rule in rules:

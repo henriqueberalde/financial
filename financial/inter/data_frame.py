@@ -1,7 +1,6 @@
 import pandas
 import re
 from financial.entities.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
-import financial.entities.db as db
 
 from pandas import DataFrame as PandasDataFrame
 from financial.entities.user import User

@@ -11,18 +11,16 @@ def __session() -> Session:
 
 
 @pytest.fixture()
-def session(scope="session") -> Session:
+def session(scope="function") -> Session:
     session = __session()
+    session.expire_all()
+    session.expunge_all()
 
     session.execute("DELETE FROM transactions;")
-    session.execute("ALTER TABLE transactions AUTO_INCREMENT = 1;")
     session.execute("DELETE FROM category_rules;")
-    session.execute("ALTER TABLE category_rules AUTO_INCREMENT = 1;")
     session.execute("DELETE FROM categories;")
-    session.execute("ALTER TABLE categories AUTO_INCREMENT = 1;")
-    session.commit()
 
-    return session  # nopep8
+    return session
 
 
 @pytest.fixture(scope="function")

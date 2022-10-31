@@ -35,7 +35,7 @@
 * [ ] DocString
 
 
-# UNIT TESTS
+# TODO UNIT TESTS
 
 * [ ] `inter_import_csv_load` Basic import test (depends on DB)
 * [ ] `inter_import_df_save` Basic (depends on DB)
@@ -49,16 +49,9 @@
 * [x] `data_frame_category` When no category matches, set category column as None
 * [x] `data_frame_category` When find more than 1 category matches, add Error
 * [x] `data_frame_category` When many category error, show them all thogether
-
-* [ ] `category_save` Basic (depends on DB)
-* [ ] `category_fetch_by_name` Basic (depends on DB)
-
-* [ ] `category_rule_save` Basic (depends on DB)
-* [ ] `category_rule_create` Happy flow (depends on DB)
-* [ ] `category_rule_create` When no category found, error (depends on DB)
-
-* [ ] `transaction_set_context` One (depends on DB)
-* [ ] `transaction_set_context` Many `separated by space` (depends on DB)
+* [x] `category_rule_distinct_categories`
+* [x] `transaction_set_context_of_many` One (depends on DB)
+* [x] `transaction_set_context_of_many` Many `separated by space` (depends on DB)
 
 <!-- DATA BASE SETUP FOR PYTEST -->
 <!-- https://smirnov-am.github.io/pytest-testing_database/ -->

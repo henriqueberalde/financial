@@ -4,7 +4,7 @@ import numpy as np
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
-from typing import Iterable, List
+from typing import Iterable, List, Any
 
 
 class Transaction(db.Base):
@@ -25,17 +25,18 @@ class Transaction(db.Base):
 
     @staticmethod
     def set_context_of_many(session: Session,
-                            ids: Iterable | str,
+                            ids: Iterable[Any] | str,
                             column_parm: str) -> None:
+
+        ids_param = str(ids).split(" ") if type(ids) == str else ids
 
         try:
             session.query(Transaction).filter(
-                Transaction.id.in_(ids)
+                Transaction.id.in_(ids_param)
             ).update({
                 Transaction.context: column_parm
             })
-
+            session.commit()
         except Exception as e:
             print(f"Error while saving data to db.{e}")
-        finally:
-            session.commit()
+            session.rollback()

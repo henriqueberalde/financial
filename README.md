@@ -16,13 +16,17 @@
 * [x] Add encapsulation `isolate spending by user context`
 * [x] Add category rules `automatic set category`
 * [x] Update unit tests not dependent from db
-* [ ] Update unit tests dependent from db
+* [x] Update unit tests dependent from db
+
 * [ ] Split import table from transactions table
 * [ ] Make import command cleanup the table after execution
+* [ ] Import part statement `avoid duplication using the date`
+
 * [ ] Reprocess categorization transactions
 * [ ] Run reprocess categorization after create or update category or category_rule
-* [ ] Import part statement `avoid duplication using the date`
+
 * [ ] Add categorization per transaction `in separated table because of the reprocessment of categorization`
+
 * [ ] Statement report by date `begin and end`
 * [ ] Grouped statement report by date `begin and end`
 * [ ] Grouped graph report `many months`
@@ -33,25 +37,3 @@
 * [ ] Remove "set X of many" feature
 * [ ] Use IMDB (in-memory database) for unit tests
 * [ ] DocString
-
-
-# TODO UNIT TESTS
-
-* [ ] `inter_import_csv_load` Basic import test (depends on DB)
-* [ ] `inter_import_df_save` Basic (depends on DB)
-
-* [x] `data_frame` Create user id column
-* [x] `data_frame` Create user account column
-* [x] `data_frame` Create bank column
-* [x] `data_frame` Create category column
-* [x] `data_frame` format date column
-* [x] `data_frame_category` When category matches, set category column
-* [x] `data_frame_category` When no category matches, set category column as None
-* [x] `data_frame_category` When find more than 1 category matches, add Error
-* [x] `data_frame_category` When many category error, show them all thogether
-* [x] `category_rule_distinct_categories`
-* [x] `transaction_set_context_of_many` One (depends on DB)
-* [x] `transaction_set_context_of_many` Many `separated by space` (depends on DB)
-
-<!-- DATA BASE SETUP FOR PYTEST -->
-<!-- https://smirnov-am.github.io/pytest-testing_database/ -->

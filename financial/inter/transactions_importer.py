@@ -49,7 +49,6 @@ class TransactionsImporter(BaseTransactionsImporter):
 
             print('\nSaving...')
             self.__save_df()
-            print('\ndone')
 
         except NormalizationError as e:
             print(f'\nNormalizing Errors. \n\n{e}')
@@ -84,7 +83,6 @@ class TransactionsImporter(BaseTransactionsImporter):
             self.session.commit()
 
         transactions = self.session.query(Transaction).all()
-        print(transactions)
 
     def __fetch_category_rules(self):
         if len(self.category_rules) == 0:

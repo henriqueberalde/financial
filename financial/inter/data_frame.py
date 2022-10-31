@@ -41,7 +41,6 @@ class DataFrame:
             errors.append(e.message)
 
     def __set_category(self, description: str) -> str | None:
-        errors: list[str] = []
         matched_rules: list[CategoryRule] = []
 
         for rule in self.category_rules:

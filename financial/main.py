@@ -89,12 +89,6 @@ def cleanup() -> None:
     print('\ndone')
 
 
-@cli.command()
-def test() -> None:
-    """Test"""
-    TransactionsCategories.set_transactions_categories(session)
-
-
 if __name__ == "__main__":
     register_repl(cli)
     cli()

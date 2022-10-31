@@ -25,7 +25,7 @@
 * [ ] Reprocess categorization transactions
 * [ ] Run reprocess categorization after create or update category or category_rule
 
-* [ ] Add categorization per transaction `in separated table because of the reprocessment of categorization`
+* [x] Add categorization per transaction `in separated table because of the reprocessment of categorization`
 
 * [ ] Statement report by date `begin and end`
 * [ ] Grouped statement report by date `begin and end`

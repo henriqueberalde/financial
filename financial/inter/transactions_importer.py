@@ -4,11 +4,11 @@ from sqlalchemy.orm import Session
 from financial.base_transactions_importer import BaseTransactionsImporter
 from pandas import DataFrame as PandasDataFrame
 from financial.inter.data_frame import DataFrame as InterDataFrame
-from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
 from financial.entities.normalization_error import NormalizationError
 from financial.entities.user import User
 from financial.entities.transaction import Transaction
+from financial.entities.transactions_categories import TransactionsCategories
 
 
 class TransactionsImporter(BaseTransactionsImporter):
@@ -36,6 +36,7 @@ class TransactionsImporter(BaseTransactionsImporter):
 
             print(f'{len(pandas_data_frame.index)} transactions found on csv file')  # nopep8
 
+            self.__fetch_category_rules()
             self.data_frame = InterDataFrame(pandas_data_frame,
                                              self.category_rules)
 
@@ -44,8 +45,9 @@ class TransactionsImporter(BaseTransactionsImporter):
             self.data_frame.add_fixed_columns(self.user, self.bank)
 
             print('Fetching category rules')
-            self.__fetch_category_rules()
             self.data_frame.set_category_by_rules()
+
+            print(self.data_frame.data_frame)
 
             print('\nSaving...')
             self.__save_df()
@@ -81,8 +83,6 @@ class TransactionsImporter(BaseTransactionsImporter):
             print(f'Error while saving data to db. {e}')
         finally:
             self.session.commit()
-
-        transactions = self.session.query(Transaction).all()
 
     def __fetch_category_rules(self):
         if len(self.category_rules) == 0:

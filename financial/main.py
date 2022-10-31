@@ -2,14 +2,17 @@ import click
 import financial.entities.db as db
 
 from sqlalchemy import delete
+from sqlalchemy.orm import Session
 from click_repl import register_repl
 from financial.inter.transactions_importer import TransactionsImporter
 from financial.entities.user import User
 from financial.entities.transaction import Transaction
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
+from financial.entities.transactions_categories import TransactionsCategories
 
-session = db.get_session()
+
+session: Session = db.get_session()
 
 
 @click.group()
@@ -84,6 +87,12 @@ def cleanup() -> None:
     session.commit()
 
     print('\ndone')
+
+
+@cli.command()
+def test() -> None:
+    """Test"""
+    TransactionsCategories.set_transactions_categories(session)
 
 
 if __name__ == "__main__":

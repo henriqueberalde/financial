@@ -11,6 +11,7 @@ __session = Session(db.get_engine("mysql+pymysql://financial_test:pass123@localh
 @pytest.fixture()
 def session(scope="function") -> Session:
     __session.expunge_all()
+    __session.execute("DELETE FROM transactions_categories;")
     __session.execute("DELETE FROM transactions;")
     __session.execute("DELETE FROM category_rules;")
     __session.execute("DELETE FROM categories;")

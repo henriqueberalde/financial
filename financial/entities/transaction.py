@@ -1,10 +1,14 @@
 import financial.entities.db as db
-import numpy as np
+import re
 
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
-from typing import Iterable, List, Any
+from typing import Iterable, Any
+from financial.entities.category_rule import CategoryRule
+from financial.entities.normalization_error import NormalizationError
+from financial.entities.transactions_categories import TransactionsCategories
+from financial.entities.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
 
 
 class Transaction(db.Base):
@@ -40,3 +44,57 @@ class Transaction(db.Base):
         except Exception as e:
             print(f"Error while saving data to db.{e}")
             session.rollback()
+
+    @staticmethod
+    def set_categories_by_rules(session: Session,
+                                category_rules: list[CategoryRule]) -> None:
+        errors: list[str] = []
+
+        transactions = session.query(Transaction).all()
+
+        for transaction in transactions:
+            try:
+                category_id = Transaction.__fetch_category_id(
+                    transaction.description,
+                    category_rules)
+
+                if category_id is not None:
+                    session.add(transaction)
+                    transaction.category_id = category_id
+            except CategoryRuleConflictError as e:
+                errors.append(e.message)
+
+        if (len(errors) > 0):
+            raise NormalizationError(errors)
+
+        session.commit()
+
+    @staticmethod
+    def set_categories_by_user(session: Session) -> None:
+        try:
+            TransactionsCategories.set_transactions_categories(session)
+        except Exception as e:
+            print(f"Error while setting specific categorization. {e}")
+
+    @staticmethod
+    def __fetch_category_id(description: str,
+                            category_rules: list[CategoryRule]) -> str | None:
+        matched_rules: list[CategoryRule] = []
+
+        for rule in category_rules:
+            if re.search(str(rule.rule),
+                         description,
+                         re.IGNORECASE) is not None:
+                matched_rules.append(rule)
+
+        distinct_matched_categories = CategoryRule.distinct_categories(
+            matched_rules
+        )
+
+        if len(distinct_matched_categories) == 0:
+            return None
+
+        if len(distinct_matched_categories) == 1:
+            return str(matched_rules[0].category.id)
+
+        raise CategoryRuleConflictError(description, matched_rules)

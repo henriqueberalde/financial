@@ -2,7 +2,6 @@ import financial.entities.db as db
 
 from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship, Session
-from financial.entities.transaction import Transaction
 
 
 class TransactionsCategories(db.Base):

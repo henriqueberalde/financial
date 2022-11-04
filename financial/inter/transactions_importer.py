@@ -8,16 +8,17 @@ from financial.entities.category_rule import CategoryRule
 from financial.entities.normalization_error import NormalizationError
 from financial.entities.user import User
 from financial.entities.transaction import Transaction
+from financial.entities.inter_transaction import InterTransaction
 from financial.entities.transactions_categories import TransactionsCategories
 
 
 class TransactionsImporter(BaseTransactionsImporter):
-    def __init__(self, session: Session, user) -> None:
+    def __init__(self, session: Session) -> None:
         super().__init__("077")
 
         self.session = session
         self.data_frame: InterDataFrame
-        self.user: User = user
+        # self.user: User = user
         self.file_path: str
         self.category_rules: list[CategoryRule] = []
         self.errors_messages: list[str] = []
@@ -26,6 +27,9 @@ class TransactionsImporter(BaseTransactionsImporter):
         self.file_path = file_path
 
         try:
+            print('\nCleaning up inter_transactions')
+            InterTransaction.cleanup_inter_transactions(self.session)
+
             print('\nReading File')
             print(f'{self.file_path}')
             pandas_data_frame = self.__load_csv()
@@ -42,10 +46,10 @@ class TransactionsImporter(BaseTransactionsImporter):
 
             print(f'\nNormalizing Data')
             self.data_frame.normalize_date()
-            self.data_frame.add_fixed_columns(self.user, self.bank)
+            # self.data_frame.add_fixed_columns(self.user, self.bank)
 
-            print('Fetching category rules')
-            self.data_frame.set_category_by_rules()
+            # print('Fetching category rules')
+            # self.data_frame.set_category_by_rules()
 
             print(self.data_frame.data_frame)
 
@@ -75,7 +79,7 @@ class TransactionsImporter(BaseTransactionsImporter):
         mysql_connection = engine.connect()
 
         try:
-            self.data_frame.data_frame.to_sql(name='transactions',
+            self.data_frame.data_frame.to_sql(name='inter_transactions',
                                               con=mysql_connection,
                                               if_exists='append',
                                               index=False)

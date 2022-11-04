@@ -6,13 +6,13 @@ from financial.inter.transactions_importer import TransactionsImporter
 from financial.entities.user import User
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
-from financial.entities.transaction import Transaction
+from financial.entities.inter_transaction import InterTransaction
 
 user = User(id=1, account="123")
 
 
 def test_inter_importer(session: Session):
-    importer = TransactionsImporter(session, user)
+    importer = TransactionsImporter(session)
 
     vivo = Category(name="Vivo")
     vivo_rule = CategoryRule(category=vivo, rule="vivo")
@@ -28,7 +28,7 @@ def test_inter_importer(session: Session):
 
     importer.import_from_csv("tests/test_import.csv")
 
-    transactions = session.query(Transaction).all()
+    transactions = session.query(InterTransaction).all()
 
     assert len(transactions) == 2
 

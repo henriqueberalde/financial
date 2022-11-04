@@ -17,14 +17,11 @@
 * [x] Add category rules `automatic set category`
 * [x] Update unit tests not dependent from db
 * [x] Update unit tests dependent from db
-
-* [ ] Split import table from transactions table
-* [ ] Make import command cleanup the table after execution
-* [ ] Import part statement `avoid duplication using the date`
-
-* [ ] Reprocess categorization transactions
-* [ ] Run reprocess categorization after create or update category or category_rule
-
+* [x] Split import table from transactions table
+* [x] Make import command cleanup the table after execution
+* [x] Import part statement `avoid duplication using the date`
+* [x] Reprocess categorization transactions
+* [x] Run reprocess categorization after create or update category or category_rule
 * [x] Add categorization per transaction `in separated table because of the reprocessment of categorization`
 
 * [ ] Statement report by date `begin and end`

@@ -24,12 +24,12 @@
 * [x] Run reprocess categorization after create or update category or category_rule
 * [x] Add categorization per transaction `in separated table because of the reprocessment of categorization`
 
+* [ ] `visualization - dash` Statement report by date `begin and end`
+* [ ] `visualization - dash` Grouped statement report by date `begin and end`
+* [ ] `visualization - dash` Grouped graph report `many months`
+
 * [ ] Annul some spend(s) based on a gain(s)
 * [ ] Create groups of categories (Like essesials and etc)
-
-* [ ] Statement report by date `begin and end`
-* [ ] Grouped statement report by date `begin and end`
-* [ ] Grouped graph report `many months`
 
 * [ ] Avoid category duplication
 * [ ] On creating category rule select category by name cas insensitivity

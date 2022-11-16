@@ -37,3 +37,10 @@
 * [ ] Remove "set X of many" feature
 * [ ] Use IMDB (in-memory database) for unit tests
 * [ ] DocString
+
+
+# Answer theese questions with features
+* [ ] How much did I spent `filter month`?
+* [ ] How much did I spent per sector (essensial and etc) `filter month`?
+* [ ] How much did I spent per category `filter month`?
+* [ ] How much did I took off from investment `filter month`?

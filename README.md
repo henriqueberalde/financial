@@ -6,7 +6,7 @@
 * [x] Try catch
 * [x] Separate data NORMALIZATION from LOAD and PERSISTENCE
 * [x] Organize classes and methods
-* [ ] `IGNORED` Import Nubank `Nubank has not an statement becouse I use it only for credit card`
+* [ ] ~~Import Nubank~~
 * [x] Import Inters Full history
 * [x] Automated tests
 * [x] Lint
@@ -27,14 +27,14 @@
 * [x] `visualization - dash` Grouped statement report by date `begin and end`
 * [x] `visualization - dash` Grouped graph report `many months`
 
-* [ ] Annul some spend(s) based on a gain(s)
+* [ ] Annul some spend(s) based on gain(s)
 * [ ] Create groups of categories (Like essesials and etc)
-
 * [ ] Avoid category duplication
-* [ ] On creating category rule select category by name cas insensitivity
-* [ ] Separate file load from data_frame manipulation
-* [ ] Remove "set X of many" feature
-* [ ] Use IMDB (in-memory database) for unit tests
+* [x] Separate file load from data_frame manipulation
+* [ ] ~~Remove "set X of many" feature~~
+* [ ] ~~Use IMDB (in-memory database) for unit tests~~
+
+* [ ] On creating category rule select category by name case insensitivity
 * [ ] DocString
 
 

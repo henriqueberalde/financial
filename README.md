@@ -27,7 +27,7 @@
 * [x] `visualization - dash` Grouped statement report by date `begin and end`
 * [x] `visualization - dash` Grouped graph report `many months`
 
-* [ ] Annul some spend(s) based on gain(s)
+* [x] Annul some spend(s) based on gain(s)
 * [ ] Create groups of categories (Like essesials and etc)
 * [ ] Avoid category duplication
 * [x] Separate file load from data_frame manipulation

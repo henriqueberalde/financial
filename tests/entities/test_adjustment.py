@@ -33,12 +33,12 @@ def test_gains_gratter_them_spends(session: Session):
     session.refresh(gain2)
     session.refresh(gain3)
 
-    assert spend1.final_value() == 0
-    assert spend2.final_value() == 0
+    assert spend1.value == 0
+    assert spend2.value == 0
 
-    assert gain1.final_value() == 76
-    assert gain2.final_value() == 35
-    assert gain3.final_value() == 0
+    assert gain1.value == 76
+    assert gain2.value == 35
+    assert gain3.value == 0
 
 
 def test_spends_gratter_them_gains(session: Session):
@@ -66,12 +66,12 @@ def test_spends_gratter_them_gains(session: Session):
     session.refresh(gain2)
     session.refresh(gain3)
 
-    assert spend1.final_value() == -500
-    assert spend2.final_value() == 0
+    assert spend1.value == -500
+    assert spend2.value == 0
 
-    assert gain1.final_value() == 0
-    assert gain2.final_value() == 0
-    assert gain3.final_value() == 0
+    assert gain1.value == 0
+    assert gain2.value == 0
+    assert gain3.value == 0
 
 
 def test_when_transaction_is_passed_success(session: Session):
@@ -88,8 +88,10 @@ def test_when_transaction_is_passed_success(session: Session):
 
     assert len(a) == 1
     assert len(a[0].transactions) == 2
-    assert a[0].transactions[0].value == -30
-    assert a[0].transactions[1].value == 30
+    assert a[0].transactions[0].original_value == -30
+    assert a[0].transactions[1].original_value == 30
+    assert a[0].transactions[0].value == 0
+    assert a[0].transactions[1].value == 0
 
 
 def test_when_int_is_passed_success(session: Session):
@@ -106,8 +108,10 @@ def test_when_int_is_passed_success(session: Session):
 
     assert len(a) == 1
     assert len(a[0].transactions) == 2
-    assert a[0].transactions[0].value == -30
-    assert a[0].transactions[1].value == 30
+    assert a[0].transactions[0].original_value == -30
+    assert a[0].transactions[1].original_value == 30
+    assert a[0].transactions[0].value == 0
+    assert a[0].transactions[1].value == 0
 
 
 def test_when_many_transactions_success(session: Session):

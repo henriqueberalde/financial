@@ -59,9 +59,9 @@ class Adjustment(db.Base):
 
             spends.sort(
                 reverse=True,
-                key=lambda t: t.final_value()  # type: ignore
+                key=lambda t: t.value  # type: ignore
             )
-            gains.sort(key=lambda t: t.final_value())  # type: ignore
+            gains.sort(key=lambda t: t.value)  # type: ignore
 
             run = True
             current_spend_index = 0
@@ -72,30 +72,30 @@ class Adjustment(db.Base):
                 g = gains[current_gain_index]
 
                 print(f"si {current_spend_index} - gi {current_gain_index}")
-                print(f"s {s.id} {s.final_value()} - g {g.id} {g.final_value()}")  # nopep8
+                print(f"s {s.id} {s.value} - g {g.id} {g.value}")  # nopep8
                 print("---")
-                result = g.final_value() + s.final_value()
+                result = g.value + s.value
 
-                g.calculated_value = result  # type: ignore
-                s.calculated_value = result  # type: ignore
+                g.value = result  # type: ignore
+                s.value = result  # type: ignore
 
                 if result > 0:
-                    s.calculated_value = 0  # type: ignore
+                    s.value = 0  # type: ignore
                 elif result < 0:
-                    g.calculated_value = 0  # type: ignore
+                    g.value = 0  # type: ignore
 
-                if s.calculated_value == 0:
+                if s.value == 0:
                     current_spend_index = spends.index(s) + 1
                     if Adjustment.__is_last_index(s, spends):  # nopep8
                         run = False
 
-                if g.calculated_value == 0:
+                if g.value == 0:
                     current_gain_index = gains.index(g) + 1
                     if Adjustment.__is_last_index(g, gains):
                         run = False
 
                 print(f"next si {current_spend_index} - next gi {current_gain_index}")  # nopep8
-                print(f"s {s.id} {s.final_value()} - g {g.id} {g.final_value()}")  # nopep8
+                print(f"s {s.id} {s.value} - g {g.id} {g.value}")  # nopep8
                 print(f"run: {run}")
                 print("")
 

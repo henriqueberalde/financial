@@ -12,6 +12,12 @@ from financial.entities.category_rule_conflict_error import CategoryRuleConflict
 
 
 class Transaction(db.Base):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.original_value is None:
+            self.original_value = self.value
+
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -21,7 +27,7 @@ class Transaction(db.Base):
     date = Column(DateTime)
     description = Column(String)
     value = Column(Numeric)
-    calculated_value = Column(Numeric)
+    original_value = Column(Numeric)
     balance = Column(Numeric)
     category_id = Column(Numeric, ForeignKey("categories.id"))
     context = Column(String)
@@ -33,15 +39,6 @@ class Transaction(db.Base):
 
     def is_gain(self) -> bool:
         return bool(self.value > 0)
-
-    def final_value(self):
-        if self.calculated_value is None:
-            return self.value
-
-        return self.calculated_value
-
-    def __sortkey__(self):
-        return self.final_value()
 
     @staticmethod
     def set_context_of_many(session: Session,

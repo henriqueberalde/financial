@@ -49,7 +49,7 @@ def all_transactions_by_period(session: Session,
             t.date,
             t.description,
             c.name,
-            t.value
+            t.original_value as value
         from transactions t
         left join categories c on c.id = t.category_id
         where date between :start_date and :end_date
@@ -160,7 +160,7 @@ app.layout = html.Div(
                 ]),
                 html.Div(className="col-12", children=[
                     html.H1(className="display-6",
-                            children='All Transactions'),
+                            children='All Transactions (no filter or normalizations)'),  # nopep8
                     html.Table(None,
                                id="table_all_transactions",
                                className="table table-striped table-hover")

@@ -36,6 +36,7 @@ def transaction_spends_by_period(session: Session,
         left join categories c on c.id = t.category_id
         where t.value < 0
         and date between :start_date and :end_date
+        and context is null
         order by date desc;
     """, {"start_date": start_date, "end_date": end_date}).fetchall()
 
@@ -68,6 +69,7 @@ def grouped_spends_by_period(session: Session,
         left join categories c on c.id = t.category_id
         where t.value < 0
             and date between :start_date and :end_date
+            and context is null
         group by c.name
         order by 2;
     """, {"start_date": start_date, "end_date": end_date}).fetchall()

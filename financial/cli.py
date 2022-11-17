@@ -11,6 +11,7 @@ from financial.entities.inter_transaction import InterTransaction
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
 from financial.entities.transactions_categories import TransactionsCategories
+from financial.entities.adjustement import Adjustment
 
 
 session: Session = db.get_session()
@@ -109,6 +110,22 @@ def create_category_rule(category_name: str, rule: str) -> None:
     Transaction.set_categories_by_rules(session,
                                         session.query(CategoryRule).all())
     TransactionsCategories.set_categories_by_user(session)
+
+    print('\ndone')
+
+
+@cli.command()
+@click.option("-reason", prompt="Reason", help="Reason of the adjustment")
+@click.option("-transactions", prompt="Transactions Id", help="Id of all transactions to be ajusted")  # nopep8
+def adjust(reason: str, transactions: str) -> None:
+    """Adjust transactions to annul spends or gains"""
+    session = db.get_session()
+    ids_param: list[int] = []
+
+    for id in transactions.split(" "):
+        ids_param.append(int(id))
+
+    Adjustment.add(session, reason, ids_param)
 
     print('\ndone')
 

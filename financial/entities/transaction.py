@@ -2,7 +2,7 @@ import financial.entities.db as db
 import re
 
 from sqlalchemy.orm import Session
-from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey, Table  # nopep8
 from sqlalchemy.orm import relationship
 from typing import Iterable, Any
 from financial.entities.category import Category
@@ -21,6 +21,7 @@ class Transaction(db.Base):
     date = Column(DateTime)
     description = Column(String)
     value = Column(Numeric)
+    calculated_value = Column(Numeric)
     balance = Column(Numeric)
     category_id = Column(Numeric, ForeignKey("categories.id"))
     context = Column(String)
@@ -32,6 +33,15 @@ class Transaction(db.Base):
 
     def is_gain(self) -> bool:
         return bool(self.value > 0)
+
+    def final_value(self):
+        if self.calculated_value is None:
+            return self.value
+
+        return self.calculated_value
+
+    def __sortkey__(self):
+        return self.final_value()
 
     @staticmethod
     def set_context_of_many(session: Session,

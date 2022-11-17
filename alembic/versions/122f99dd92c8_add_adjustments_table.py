@@ -1,4 +1,4 @@
-"""alter clearing_transactions
+"""add adjustments table
 
 Revision ID: 122f99dd92c8
 Revises: 14dab5a38d65
@@ -22,7 +22,7 @@ def upgrade() -> None:
                   table_name='clearing_transactions')
     op.drop_table('clearing_transactions')
 
-    op.create_table('cancel_transactions',
+    op.create_table('adjustments',
                     sa.Column('id',
                               mysql.INTEGER(),
                               autoincrement=True,
@@ -35,33 +35,33 @@ def upgrade() -> None:
                     mysql_default_charset='utf8mb4',
                     mysql_engine='InnoDB')
 
-    op.create_table('transactions_cancelled',
-                    sa.Column('cancel_id',
+    op.create_table('transactions_adjustments',
+                    sa.Column('adjustment_id',
                               mysql.INTEGER(),
                               nullable=False),
                     sa.Column('transaction_id',
                               mysql.INTEGER(),
                               nullable=False),
-                    sa.PrimaryKeyConstraint('cancel_id', 'transaction_id'),
-                    sa.ForeignKeyConstraint(('cancel_id',),
-                                            ['cancel_transactions.id']),
+                    sa.PrimaryKeyConstraint('adjustment_id', 'transaction_id'),
+                    sa.ForeignKeyConstraint(('adjustment_id',),
+                                            ['adjustments.id']),
                     sa.ForeignKeyConstraint(('transaction_id',),
                                             ['transactions.id']),
                     mysql_collate='utf8mb4_0900_ai_ci',
                     mysql_default_charset='utf8mb4',
                     mysql_engine='InnoDB')
 
-    op.create_index('cancel_id_transaction_id_UNIQUE',
-                    'transactions_cancelled',
-                    ['cancel_id', 'transaction_id'],
+    op.create_index('adjustment_id_transaction_id_UNIQUE',
+                    'transactions_adjustments',
+                    ['adjustment_id', 'transaction_id'],
                     unique=True)
 
 
 def downgrade() -> None:
-    op.drop_index('cancel_id_transaction_id_UNIQUE',
-                  table_name='transactions_cancelled')
-    op.drop_table('transactions_cancelled')
-    op.drop_table('cancel_transactions')
+    op.drop_index('adjustment_id_transaction_id_UNIQUE',
+                  table_name='transactions_adjustments')
+    op.drop_table('transactions_adjustments')
+    op.drop_table('adjustments')
 
     op.create_table('clearing_transactions',
                     sa.Column('spend_id',

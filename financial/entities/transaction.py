@@ -27,6 +27,12 @@ class Transaction(db.Base):
 
     category = relationship("Category")
 
+    def is_spend(self) -> bool:
+        return bool(self.transaction.value < 0)
+
+    def is_gain(self) -> bool:
+        return bool(self.value > 0)
+
     @staticmethod
     def set_context_of_many(session: Session,
                             ids: Iterable[Any] | str,

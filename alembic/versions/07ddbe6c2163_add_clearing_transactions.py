@@ -19,14 +19,14 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table('clearing_transactions',
-                    sa.Column('spent_id',
+                    sa.Column('spend_id',
                               mysql.INTEGER(),
                               nullable=False),
                     sa.Column('gain_id',
                               mysql.INTEGER(),
                               nullable=False),
-                    sa.PrimaryKeyConstraint('spent_id', 'gain_id'),
-                    sa.ForeignKeyConstraint(('spent_id',),
+                    sa.PrimaryKeyConstraint('spend_id', 'gain_id'),
+                    sa.ForeignKeyConstraint(('spend_id',),
                                             ['transactions.id']),
                     sa.ForeignKeyConstraint(('gain_id',),
                                             ['transactions.id']),
@@ -34,13 +34,13 @@ def upgrade() -> None:
                     mysql_default_charset='utf8mb4',
                     mysql_engine='InnoDB')
 
-    op.create_index('spent_id_gain_id_UNIQUE',
+    op.create_index('spend_id_gain_id_UNIQUE',
                     'clearing_transactions',
-                    ['spent_id', 'gain_id'],
+                    ['spend_id', 'gain_id'],
                     unique=True)
 
 
 def downgrade() -> None:
-    op.drop_index('spent_id_gain_id_UNIQUE',
+    op.drop_index('spend_id_gain_id_UNIQUE',
                   table_name='clearing_transactions')
     op.drop_table('clearing_transactions')

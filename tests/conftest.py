@@ -12,12 +12,14 @@ __session = Session(db.get_engine("mysql+pymysql://financial_test:pass123@localh
 def session(scope="function") -> Session:
     __session.expunge_all()
     __session.execute("DELETE FROM transactions_categories;")
+    __session.execute("DELETE FROM clearing_transactions;")
     __session.execute("DELETE FROM transactions;")
     __session.execute("DELETE FROM inter_transactions;")
     __session.execute("DELETE FROM category_rules;")
     __session.execute("DELETE FROM categories;")
 
     __session.execute("ALTER TABLE transactions AUTO_INCREMENT = 1;")
+    __session.execute("ALTER TABLE clearing_transactions AUTO_INCREMENT = 1;")
     __session.execute("ALTER TABLE inter_transactions AUTO_INCREMENT = 1;")
     __session.execute("ALTER TABLE category_rules AUTO_INCREMENT = 1;")
     __session.execute("ALTER TABLE categories AUTO_INCREMENT = 1;")
@@ -31,4 +33,4 @@ def interImporterUser1():
     """
     Instance of Inter`s TransactionsImporter with id:1, account: user_account
     """
-    return TransactionsImporter(session(), User(1, "user_account"))
+    return TransactionsImporter(session())

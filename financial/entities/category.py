@@ -1,5 +1,4 @@
 import financial.entities.db as db
-from sqlalchemy.orm import Session
 
 from sqlalchemy import Column, Integer, String
 

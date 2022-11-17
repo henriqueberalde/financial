@@ -1,5 +1,7 @@
 import financial.entities.db as db
 
+from financial.entities.category import Category
+from financial.entities.transaction import Transaction
 from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship, Session
 
@@ -27,3 +29,10 @@ class TransactionsCategories(db.Base):
             session.add(tc)
 
         session.commit()
+
+    @staticmethod
+    def set_categories_by_user(session: Session) -> None:
+        try:
+            TransactionsCategories.set_transactions_categories(session)
+        except Exception as e:
+            print(f"Error while setting specific categorization. {e}")

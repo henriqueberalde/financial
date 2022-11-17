@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Iterable, Any
+from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
 from financial.entities.normalization_error import NormalizationError
-from financial.entities.transactions_categories import TransactionsCategories
 from financial.entities.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
 
 
@@ -28,7 +28,7 @@ class Transaction(db.Base):
     category = relationship("Category")
 
     def is_spend(self) -> bool:
-        return bool(self.transaction.value < 0)
+        return bool(self.value < 0)
 
     def is_gain(self) -> bool:
         return bool(self.value > 0)
@@ -74,13 +74,6 @@ class Transaction(db.Base):
             raise NormalizationError(errors)
 
         session.commit()
-
-    @staticmethod
-    def set_categories_by_user(session: Session) -> None:
-        try:
-            TransactionsCategories.set_transactions_categories(session)
-        except Exception as e:
-            print(f"Error while setting specific categorization. {e}")
 
     @staticmethod
     def __fetch_category_id(description: str,

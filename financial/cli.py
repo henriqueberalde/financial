@@ -48,7 +48,7 @@ def merge_inter_transactions(user_id: int, user_account: str) -> None:
     Transaction.set_categories_by_rules(session,
                                         session.query(CategoryRule).all())
 
-    Transaction.set_categories_by_user(session)
+    TransactionsCategories.set_categories_by_user(session)
 
     print('\ndone')
 
@@ -89,7 +89,7 @@ def set_category(category_name: str, transaction_id: int) -> None:
                                 transaction_id=transaction_id)
     session.add(tc)
     session.commit()
-    Transaction.set_categories_by_user(session)
+    TransactionsCategories.set_categories_by_user(session)
 
     print('\ndone')
 
@@ -108,7 +108,7 @@ def create_category_rule(category_name: str, rule: str) -> None:
     print('\nReprocessing categories')
     Transaction.set_categories_by_rules(session,
                                         session.query(CategoryRule).all())
-    Transaction.set_categories_by_user(session)
+    TransactionsCategories.set_categories_by_user(session)
 
     print('\ndone')
 

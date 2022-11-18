@@ -39,7 +39,7 @@
 
 
 # Answer theese questions with features
-* [ ] How much did I spent `filter month`?
+* [x] How much did I spent `filter month`?
 * [ ] How much did I spent per sector (essensial and etc) `filter month`?
-* [ ] How much did I spent per category `filter month`?
+* [x] How much did I spent per category `filter month`?
 * [ ] How much did I took off from investment `filter month`?

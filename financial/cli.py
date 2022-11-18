@@ -124,7 +124,7 @@ def adjust(reason: str, transactions: str) -> None:
     ids_param: list[int] = []
 
     for id in transactions.split(" "):
-        ids_param.append(int(id))
+        ids_param.append(int(id))  # type: ignore
 
     Adjustment.add(session, reason, ids_param)
 

@@ -131,3 +131,23 @@ def test_merge_to_transactions_existing_transactions(session: Session):
     assert transactions[2].bank == bank
     assert transactions[2].user_id == user.id
     assert transactions[2].user_account == user.account
+
+
+def test_merge_to_transactions_set_original_value(session):
+    user = User(99, "test_user_account")
+
+    it1 = InterTransaction(
+        date=Timestamp(2022, 1, 1),
+        description="Test1",
+        value=34,
+        balance=111.1)
+
+    session.add(it1)
+    session.commit()
+
+    InterTransaction.merge_to_transactions(session, user)
+
+    transactions = session.query(Transaction).all()
+
+    assert len(transactions) == 1
+    assert transactions[0].original_value == transactions[0].value

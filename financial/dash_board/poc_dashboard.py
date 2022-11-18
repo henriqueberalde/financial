@@ -174,8 +174,8 @@ def spends_transactions_df(start_date: datetime, end_date: datetime):
 def gains_transactions_df(start_date: datetime, end_date: datetime):
     gains_transactions_df = pd.DataFrame(
         transaction_gains_by_period(db.get_session(),
-                                     start_date,
-                                     end_date)
+                                    start_date,
+                                    end_date)
     )
 
     if len(gains_transactions_df) == 0:

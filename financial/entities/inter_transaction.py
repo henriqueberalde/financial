@@ -28,6 +28,7 @@ class InterTransaction(db.Base):
                                     date,
                                     description,
                                     value,
+                                    original_value,
                                     balance
                                 )
                                 SELECT
@@ -36,6 +37,7 @@ class InterTransaction(db.Base):
                                     :bank,
                                     it.date,
                                     it.description,
+                                    it.value,
                                     it.value,
                                     it.balance
                                 from inter_transactions it

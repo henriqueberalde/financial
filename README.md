@@ -36,6 +36,8 @@
 
 * [ ] On creating category rule select category by name case insensitivity
 * [ ] DocString
+* [ ] Use python Decimal in everything to avoid rounding errors
+* [ ] Set some tests to use decimal values
 
 
 # Answer theese questions with features
@@ -46,5 +48,5 @@
 
 
 # BUGs
-* [ ] Transaction`s original_value is not being inicialized correctly on merge transaction command
+* [x] Transaction`s original_value is not being inicialized correctly on merge transaction command
 * [ ] Old transactions are being merged again because the originals were changed, so the system doesn`t recognize it

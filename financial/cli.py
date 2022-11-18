@@ -67,10 +67,11 @@ def set_context(c: str, ids: str) -> None:
 
 @cli.command()
 @click.option("-name", prompt="Name", help="Category`s name")
-def create_category(name: str) -> None:
-    """Create a category with the name"""
+@click.option("-sector", prompt="Sector", help="Category`s sector")
+def create_category(name: str, sector: str) -> None:
+    """Create a category with the name and sector"""
 
-    session.add(Category(name=name))
+    session.add(Category(name=name, sector=sector))
     session.commit()
 
     print('\ndone')

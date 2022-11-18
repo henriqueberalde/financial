@@ -8,3 +8,4 @@ class Category(db.Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
+    sector = Column(String)

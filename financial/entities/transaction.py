@@ -1,5 +1,6 @@
-import financial.entities.db as db
+import hashlib
 import re
+import financial.entities.db as db
 
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey, Table  # nopep8
@@ -18,6 +19,9 @@ class Transaction(db.Base):
         if self.original_value is None:
             self.original_value = self.value
 
+        if self.original_hash is None:
+            self.__generate_hash()
+
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -31,6 +35,7 @@ class Transaction(db.Base):
     balance = Column(Numeric)
     category_id = Column(Numeric, ForeignKey("categories.id"))
     context = Column(String)
+    original_hash = Column(String)
 
     category = relationship("Category")
 
@@ -104,3 +109,12 @@ class Transaction(db.Base):
             return str(matched_rules[0].category.id)
 
         raise CategoryRuleConflictError(description, matched_rules)
+
+    def __generate_hash(self) -> None:
+        date = self.date.strftime("%Y-%m-%d %H:%M:%S")
+        concat_result = f"{date}{self.description}{self.value}{self.balance}"  # nopep8
+        self.original_hash = Transaction.str_to_hash(concat_result)
+
+    @staticmethod
+    def str_to_hash(str: str) -> str:
+        return hashlib.sha256(str.encode('utf-8')).hexdigest()

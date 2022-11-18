@@ -46,10 +46,7 @@ class TransactionsImporter(BaseTransactionsImporter):
 
             print(f'\nNormalizing Data')
             self.data_frame.normalize_date()
-            # self.data_frame.add_fixed_columns(self.user, self.bank)
-
-            # print('Fetching category rules')
-            # self.data_frame.set_category_by_rules()
+            self.data_frame.add_hash_column()
 
             print(self.data_frame.data_frame)
 

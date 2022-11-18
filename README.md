@@ -28,7 +28,7 @@
 * [x] `visualization - dash` Grouped graph report `many months`
 
 * [x] Annul some spend(s) based on gain(s)
-* [ ] Create groups of categories (Like essesials and etc)
+* [x] Create groups of categories (Like essesials and etc)
 * [ ] Avoid category duplication
 * [x] Separate file load from data_frame manipulation
 * [ ] ~~Remove "set X of many" feature~~
@@ -45,8 +45,3 @@
 * [x] How much did I spent per sector (essensial and etc) `filter month`?
 * [x] How much did I spent per category `filter month`?
 * [x] How much did I took off from investment `filter month`?
-
-
-# BUGs
-* [x] Transaction`s original_value is not being inicialized correctly on merge transaction command
-* [ ] Old transactions are being merged again because the originals were changed, so the system doesn`t recognize it

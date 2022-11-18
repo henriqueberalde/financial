@@ -111,7 +111,7 @@ class Transaction(db.Base):
         raise CategoryRuleConflictError(description, matched_rules)
 
     def __generate_hash(self) -> None:
-        date = self.date.strftime("%Y-%m-%d %H:%M:%S")
+        date = self.date.strftime("%Y-%m-%d %H:%M:%S")  # type: ignore
         concat_result = f"{date}{self.description}{self.value}{self.balance}"  # nopep8
         self.original_hash = Transaction.str_to_hash(concat_result)
 

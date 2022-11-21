@@ -26,9 +26,11 @@
 * [x] `visualization - dash` Statement report by date `begin and end`
 * [x] `visualization - dash` Grouped statement report by date `begin and end`
 * [x] `visualization - dash` Grouped graph report `many months`
+* [x] `visualization - dash` See every month in the same table
 
 * [x] Annul some spend(s) based on gain(s)
 * [x] Create groups of categories (Like essesials and etc)
+* [ ] Remove Outros Category
 * [ ] Avoid category duplication
 * [x] Separate file load from data_frame manipulation
 * [ ] ~~Remove "set X of many" feature~~
@@ -45,3 +47,6 @@
 * [x] How much did I spent per sector (essensial and etc) `filter month`?
 * [x] How much did I spent per category `filter month`?
 * [x] How much did I took off from investment `filter month`?
+
+
+

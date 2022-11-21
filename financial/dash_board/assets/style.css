@@ -3,7 +3,7 @@ body {
     padding: 1rem 0rem;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h4 {
     margin-top: 3rem;
 }
 
@@ -23,4 +23,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .DateInput {
     width: 150px;
+}
+
+#table_all_months
+{
+    font-size: 12px;
+}
+
+#table_all_months > :not(caption) > * > * {
+    padding: .1rem;
 }

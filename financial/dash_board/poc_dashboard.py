@@ -2,6 +2,7 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 
+import calendar
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
@@ -71,7 +72,8 @@ def all_transactions_by_period(session: Session,
             t.date,
             t.description,
             c.sector,
-            c.name,
+            c.name as category,
+            context,
             t.original_value as value
         from transactions t
         left join categories c on c.id = t.category_id
@@ -83,11 +85,33 @@ def all_transactions_by_period(session: Session,
 def grouped_spends_by_period(session: Session,
                              start_date: datetime,
                              end_date: datetime):
-    return session.execute("""
+    print(start_date)
+    print(start_date)
+    return session.execute(f"""
         select
             c.sector,
             c.name as category,
             SUM(t.value) as value_spent
+        from transactions t
+        left join categories c on c.id = t.category_id
+        where t.value < 0
+            and date between :start_date and :end_date
+            and context is null
+        group by c.name, c.sector
+        order by c.sector, 3 desc;
+    """, {"start_date": start_date, "end_date": end_date}).fetchall()
+
+
+def grouped_spends_by_period_all(session: Session,
+                                 start_date: datetime,
+                                 end_date: datetime):
+    print(start_date)
+    print(start_date)
+    return session.execute(f"""
+        select
+            c.sector,
+            c.name as category,
+            SUM(t.value) as {start_date.month}_{start_date.year}
         from transactions t
         left join categories c on c.id = t.category_id
         where t.value < 0
@@ -126,6 +150,30 @@ def table_content(df: DataFrame):
             ]) for i in range(min(len(df), 1000))
         ])
     ]
+
+
+def every_month() -> DataFrame:
+    year = datetime.now().year
+
+    df: DataFrame = None  # type:ignore
+
+    for month in range(1, 13):
+        start_date = datetime(year, month, 1, 0, 0, 0, 0)
+        last_day = calendar.monthrange(year, month)[1]
+        end_date = datetime(year, month, last_day, 23, 59, 59, 999999)
+
+        df_local = pd.DataFrame(grouped_spends_by_period_all(db.get_session(),
+                                start_date,
+                                end_date))
+        if df is None:
+            df = df_local
+        elif len(df_local) > 0:
+            df = df.merge(
+                df_local,
+                how="outer",
+                on=("sector", "category"))  # type: ignore
+
+    return df
 
 
 def grouped_spends_df(start_date: datetime, end_date: datetime):
@@ -210,6 +258,12 @@ app.layout = html.Div(
         html.Div(
             className="row",
             children=[
+                html.Div(className="col-12", children=[
+                    html.H5(className="display-6", children='All Months'),
+                    html.Table(table_content(every_month()),
+                               id="table_all_months",
+                               className="table table-striped table-hover")
+                ]),
                 html.Div(className="col-12", children=[
                     html.Form(children=[
                         dcc.DatePickerRange(

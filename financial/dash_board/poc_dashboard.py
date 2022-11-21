@@ -85,8 +85,6 @@ def all_transactions_by_period(session: Session,
 def grouped_spends_by_period(session: Session,
                              start_date: datetime,
                              end_date: datetime):
-    print(start_date)
-    print(start_date)
     return session.execute(f"""
         select
             c.sector,
@@ -105,8 +103,6 @@ def grouped_spends_by_period(session: Session,
 def grouped_spends_by_period_all(session: Session,
                                  start_date: datetime,
                                  end_date: datetime):
-    print(start_date)
-    print(start_date)
     return session.execute(f"""
         select
             c.sector,
@@ -173,7 +169,7 @@ def every_month() -> DataFrame:
                 how="outer",
                 on=("sector", "category"))  # type: ignore
 
-    return df
+    return df.sort_values(by=['sector'], na_position='first')
 
 
 def grouped_spends_df(start_date: datetime, end_date: datetime):

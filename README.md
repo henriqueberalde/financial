@@ -6,7 +6,6 @@
 * [x] Try catch
 * [x] Separate data NORMALIZATION from LOAD and PERSISTENCE
 * [x] Organize classes and methods
-* [ ] ~~Import Nubank~~
 * [x] Import Inters Full history
 * [x] Automated tests
 * [x] Lint
@@ -23,30 +22,34 @@
 * [x] Reprocess categorization transactions
 * [x] Run reprocess categorization after create or update category or category_rule
 * [x] Add categorization per transaction `in separated table because of the reprocessment of categorization`
-* [x] `visualization - dash` Statement report by date `begin and end`
-* [x] `visualization - dash` Grouped statement report by date `begin and end`
-* [x] `visualization - dash` Grouped graph report `many months`
-* [x] `visualization - dash` See every month in the same table
-
 * [x] Annul some spend(s) based on gain(s)
 * [x] Create groups of categories (Like essesials and etc)
 * [ ] Remove Outros Category
 * [ ] Avoid category duplication
-* [x] Separate file load from data_frame manipulation
 * [ ] ~~Remove "set X of many" feature~~
-* [ ] ~~Use IMDB (in-memory database) for unit tests~~
+* [ ] ~~Import Nubank~~
 
+# Visualization Dash
+
+* [x] Statement report by date `begin and end`
+* [x] Grouped statement report by date `begin and end`
+* [x] Grouped graph report `many months`
+* [x] See every month in the same table
+* [ ] Hover on one month in all months` table to show percentage of diference between last value
+
+    #### Answer theese questions with features
+    * [x] How much did I spent `filter month`?
+    * [x] How much did I spent per sector (essensial and etc) `filter month`?
+    * [x] How much did I spent per category `filter month`?
+    * [x] How much did I took off from investment `filter month`?
+
+# Technical things
+
+* [x] Separate file load from data_frame manipulation
+* [ ] Turn poc dashoboard into a feature with tests and etc
 * [ ] On creating category rule select category by name case insensitivity
 * [ ] DocString
 * [ ] Use python Decimal in everything to avoid rounding errors
 * [ ] Set some tests to use decimal values
-
-
-# Answer theese questions with features
-* [x] How much did I spent `filter month`?
-* [x] How much did I spent per sector (essensial and etc) `filter month`?
-* [x] How much did I spent per category `filter month`?
-* [x] How much did I took off from investment `filter month`?
-
-
-
+* [ ] Add Prettier
+* [ ] ~~Use IMDB (in-memory database) for unit tests~~

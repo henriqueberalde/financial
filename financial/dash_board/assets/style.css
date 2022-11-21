@@ -1,6 +1,7 @@
 body {
     font-family: sans-serif;
     padding: 1rem 0rem;
+    font-size: 12px;
 }
 
 h4 {
@@ -25,9 +26,27 @@ h4 {
     width: 150px;
 }
 
+table > * > tr > *:last-child {
+    text-align: right;
+}
+
+#table_spends_transactions > * > tr > *:nth-last-child(2) {
+    text-align: right;
+}
+
+#table_gains_transactions > * > tr > *:nth-last-child(2) {
+    text-align: right;
+}
+
 #table_all_months
 {
     font-size: 12px;
+    /* text-align: right; */
+}
+
+#table_all_months > * > tr > *:nth-child(n+3)
+{
+    text-align: right;
 }
 
 #table_all_months > :not(caption) > * > * {

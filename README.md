@@ -26,6 +26,7 @@
 * [x] Create groups of categories (Like essesials and etc)
 * [ ] Remove Outros Category
 * [ ] Avoid category duplication
+* [ ] Add priority on category to sort by it
 * [ ] ~~Remove "set X of many" feature~~
 * [ ] ~~Import Nubank~~
 
@@ -34,7 +35,12 @@
 * [x] Grouped statement report by date `begin and end`
 * [x] Grouped graph report `many months`
 * [x] See every month in the same table
-* [ ] Hover on one month in all months` table to show percentage of diference between last value
+* [x] Align numbers at right
+* [ ] Money format
+* [ ] `all month` Hover on one month in all months` table to show percentage of diference between last value
+* [ ] `all month` Select a category and shows it on graph comparing all months and other things
+* [ ] `all month` Add total in every month
+
 
 # Answer theese questions with features
 * [x] How much did I spent `filter month`?

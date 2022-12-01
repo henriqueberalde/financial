@@ -56,3 +56,9 @@ table > * > tr > *:last-child {
 #table_all_months > :not(caption) > * > * {
     padding: .1rem;
 }
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}

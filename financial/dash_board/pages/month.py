@@ -1,13 +1,14 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
-
+import dash
 import calendar
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 import financial.entities.db as db
 
+from dash import callback
 from sqlalchemy.orm import Session
 from pandas import DataFrame
 from dash import Dash, html, dcc, Output, Input
@@ -17,10 +18,12 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
 
 
-empty_result = "No Data"
-external_css = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"  # nopep8
+# external_css = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"  # nopep8
+# app = Dash(__name__, external_stylesheets=[external_css])
 
-app = Dash(__name__, external_stylesheets=[external_css])
+empty_result = "No Data"
+
+dash.register_page(__name__)
 
 
 def transaction_spends_by_period(session: Session,
@@ -59,25 +62,6 @@ def transaction_gains_by_period(session: Session,
         where t.value > 0
         and date between :start_date and :end_date
         and context is null
-        order by date desc;
-    """, {"start_date": start_date, "end_date": end_date}).fetchall()
-
-
-def all_transactions_by_period(session: Session,
-                               start_date: datetime,
-                               end_date: datetime):
-    return session.execute("""
-        select
-            t.id,
-            t.date,
-            t.description,
-            c.sector,
-            c.name as category,
-            context,
-            t.original_value as value
-        from transactions t
-        left join categories c on c.id = t.category_id
-        where date between :start_date and :end_date
         order by date desc;
     """, {"start_date": start_date, "end_date": end_date}).fetchall()
 
@@ -148,30 +132,6 @@ def table_content(df: DataFrame):
     ]
 
 
-def every_month() -> DataFrame:
-    year = datetime.now().year
-
-    df: DataFrame = None  # type:ignore
-
-    for month in range(1, 13):
-        start_date = datetime(year, month, 1, 0, 0, 0, 0)
-        last_day = calendar.monthrange(year, month)[1]
-        end_date = datetime(year, month, last_day, 23, 59, 59, 999999)
-
-        df_local = pd.DataFrame(grouped_spends_by_period_all(db.get_session(),
-                                start_date,
-                                end_date))
-        if df is None:
-            df = df_local
-        elif len(df_local) > 0:
-            df = df.merge(
-                df_local,
-                how="outer",
-                on=("sector", "category"))  # type: ignore
-
-    return df.sort_values(by=['sector'], na_position='first')
-
-
 def grouped_spends_df(start_date: datetime, end_date: datetime):
     grouped_spends_df = pd.DataFrame(
         grouped_spends_by_period(db.get_session(),
@@ -240,26 +200,12 @@ def gains_transactions_df(start_date: datetime, end_date: datetime):
     return gains_transactions_df
 
 
-def all_transactions_df(start_date, end_date):
-    return pd.DataFrame(
-        all_transactions_by_period(db.get_session(),
-                                   start_date,
-                                   end_date)
-    )
-
-
-app.layout = html.Div(
+layout = html.Div(
     className="container-fluid",
     children=[
         html.Div(
             className="row",
             children=[
-                html.Div(className="col-12", children=[
-                    html.H5(className="display-6", children='All Months'),
-                    html.Table(table_content(every_month()),
-                               id="table_all_months",
-                               className="table table-striped table-hover")
-                ]),
                 html.Div(className="col-12", children=[
                     html.Form(children=[
                         dcc.DatePickerRange(
@@ -309,7 +255,7 @@ app.layout = html.Div(
 )
 
 
-@app.callback(
+@callback(
     Output('table_grouped_spends', 'children'),
     Output('total_spent', 'children'),
     Input('date-picker-range', 'start_date'),
@@ -333,7 +279,7 @@ def update_grouped_spends(start_date, end_date):
     return table_content(df), f"Total spent: {total_value}"
 
 
-@app.callback(
+@callback(
     Output('table_grouped_sector_spends', 'children'),
     Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date'))
@@ -349,7 +295,7 @@ def update_grouped_sector_spends(start_date, end_date):
     return table_content(df)
 
 
-@app.callback(
+@callback(
     Output('table_spends_transactions', 'children'),
     Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date'))
@@ -365,7 +311,7 @@ def update_spends_transactions(start_date, end_date):
     return table_content(df)
 
 
-@app.callback(
+@callback(
     Output('table_gains_transactions', 'children'),
     Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date'))
@@ -381,22 +327,6 @@ def update_gains_transactions(start_date, end_date):
     return table_content(df)
 
 
-@app.callback(
-    Output('table_all_transactions', 'children'),
-    Input('date-picker-range', 'start_date'),
-    Input('date-picker-range', 'end_date'))
-def update_all_transactions(start_date, end_date):
-    if not has_date_range(start_date, end_date):
-        return empty_result
-
-    df = all_transactions_df(start_date, end_date)
-
-    if len(df) == 0:
-        return empty_result
-
-    return table_content(df)
-
-
 def has_date_range(start_date, end_date):
     if start_date is None:
         return False
@@ -405,7 +335,3 @@ def has_date_range(start_date, end_date):
         return False
 
     return True
-
-
-if __name__ == "__main__":
-    app.run_server(debug=True)

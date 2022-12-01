@@ -119,6 +119,25 @@ def grouped_sector_spends_by_period(session: Session,
     """, {"start_date": start_date, "end_date": end_date}).fetchall()
 
 
+def all_transactions_by_period(session: Session,
+                               start_date: datetime,
+                               end_date: datetime):
+    return session.execute("""
+        select
+            t.id,
+            t.date,
+            t.description,
+            c.sector,
+            c.name as category,
+            context,
+            t.original_value as value
+        from transactions t
+        left join categories c on c.id = t.category_id
+        where date between :start_date and :end_date
+        order by date desc;
+    """, {"start_date": start_date, "end_date": end_date}).fetchall()
+
+
 def table_content(df: DataFrame):
     return [
         html.Thead(
@@ -198,6 +217,14 @@ def gains_transactions_df(start_date: datetime, end_date: datetime):
         total_df], axis=0)
 
     return gains_transactions_df
+
+
+def all_transactions_df(start_date, end_date):
+    return pd.DataFrame(
+        all_transactions_by_period(db.get_session(),
+                                   start_date,
+                                   end_date)
+    )
 
 
 layout = html.Div(
@@ -320,6 +347,22 @@ def update_gains_transactions(start_date, end_date):
         return empty_result
 
     df = gains_transactions_df(start_date, end_date)
+
+    if len(df) == 0:
+        return empty_result
+
+    return table_content(df)
+
+
+@callback(
+    Output('table_all_transactions', 'children'),
+    Input('date-picker-range', 'start_date'),
+    Input('date-picker-range', 'end_date'))
+def update_all_transactions(start_date, end_date):
+    if not has_date_range(start_date, end_date):
+        return empty_result
+
+    df = all_transactions_df(start_date, end_date)
 
     if len(df) == 0:
         return empty_result

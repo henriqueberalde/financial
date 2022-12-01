@@ -23,12 +23,16 @@ def data_frame() -> DataFrame:
 
 def get_data(session: Session):
     return session.execute(f"""
-        select date, value
+        select
+            DATE_FORMAT(date, '%m-%Y') as date_ref,
+            SUM(value)*-1 as sum
         from transactions
-        where description LIKE '%CDB POS DI LIQ. BANCO INTER SA%';
+        where description LIKE '%CDB POS DI LIQ. BANCO INTER SA%'
+        and date > '2021-08-31'
+        group by date_ref;
     """).fetchall()
 
 
 df = data_frame()
-fig = go.Figure(data=[go.Scatter(x=df["date"], y=df["value"])])
+fig = go.Figure(data=[go.Scatter(x=df["date_ref"], y=df["sum"])])
 layout = dcc.Graph(figure=fig)

@@ -1,4 +1,5 @@
 # TODO
+* [ ] Use https://www.mage.ai/
 * [x] Add bank column
 * [x] Receive file_path, user_id, user_account and bank as input
 * [x] Log messages

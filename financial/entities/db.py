@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm import declarative_base
 
 
-def get_engine(conn_string: str = "mysql+pymysql://financial:pass123@localhost/financial") -> Engine:  # nopep8
+def get_engine(conn_string: str = "mysql+pymysql://financial:pass_123@localhost/financial") -> Engine:  # nopep8
     return create_engine(conn_string)
 
 

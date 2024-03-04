@@ -1,3 +1,20 @@
+An application to organize my financial life.
+
+# Setup
+- python 3.10
+- poetry 1.8.2
+- mysql 8.0
+
+# Usage
+### CLI
+```> python3 ./financial/cli.py```
+
+### Dash Board
+```> python3 ./financial/dashboard/app.py```
+
+# Tests
+...
+
 # TODO
 * [ ] Use https://www.mage.ai/
 * [x] Add bank column

@@ -47,7 +47,8 @@ def every_month() -> DataFrame:
                 how="outer",
                 on=("sector", "category"))  # type: ignore
 
-    return df.sort_values(by=['sector'], na_position='first')
+    # return df .sort_values(by=['sector'], na_position='first')
+    return df
 
 
 def grouped_spends_by_period_all(session: Session,

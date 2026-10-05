@@ -8,7 +8,6 @@ from sqlalchemy.orm import relationship
 from typing import Iterable, Any
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
-from financial.entities.normalization_error import NormalizationError
 from financial.entities.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
 
 
@@ -50,7 +49,7 @@ class Transaction(db.Base):
                             ids: Iterable[Any] | str,
                             column_parm: str) -> None:
 
-        ids_param = str(ids).split(" ") if type(ids) == str else ids
+        ids_param = str(ids).split(" ") if isinstance(ids, str) else ids
 
         try:
             session.query(Transaction).filter(
@@ -65,7 +64,9 @@ class Transaction(db.Base):
 
     @staticmethod
     def set_categories_by_rules(session: Session,
-                                category_rules: list[CategoryRule]) -> None:
+                                category_rules: list[CategoryRule]) -> list[str]:  # nopep8
+        """Set categories by rules, skipping transactions matched by rules
+        of more than one category. Returns the conflict messages."""
         errors: list[str] = []
 
         transactions = session.query(Transaction).all()
@@ -82,10 +83,9 @@ class Transaction(db.Base):
             except CategoryRuleConflictError as e:
                 errors.append(e.message)
 
-        if (len(errors) > 0):
-            raise NormalizationError(errors)
-
         session.commit()
+
+        return errors
 
     @staticmethod
     def __fetch_category_id(description: str,

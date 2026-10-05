@@ -144,7 +144,7 @@ class Adjustment(db.Base):
                           ids: list[int]) -> list[Transaction]:
         result: list[Transaction] = []
         for id in ids:
-            result.append(session.query(Transaction).get(id))
+            result.append(session.get(Transaction, id))
 
         return result
 

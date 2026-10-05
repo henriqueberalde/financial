@@ -9,6 +9,7 @@ import plotly.graph_objs as go
 import financial.entities.db as db
 
 from dash import callback
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from pandas import DataFrame
 from dash import Dash, html, dcc, Output, Input
@@ -29,7 +30,7 @@ dash.register_page(__name__)
 def transaction_spends_by_period(session: Session,
                                  start_date: datetime,
                                  end_date: datetime):
-    return session.execute("""
+    return session.execute(text("""
         select
             t.id,
             t.date,
@@ -43,13 +44,13 @@ def transaction_spends_by_period(session: Session,
         and date between :start_date and :end_date
         and context is null
         order by date desc;
-    """, {"start_date": start_date, "end_date": end_date}).fetchall()
+    """), {"start_date": start_date, "end_date": end_date}).fetchall()
 
 
 def transaction_gains_by_period(session: Session,
                                 start_date: datetime,
                                 end_date: datetime):
-    return session.execute("""
+    return session.execute(text("""
         select
             t.id,
             t.date,
@@ -63,13 +64,13 @@ def transaction_gains_by_period(session: Session,
         and date between :start_date and :end_date
         and context is null
         order by date desc;
-    """, {"start_date": start_date, "end_date": end_date}).fetchall()
+    """), {"start_date": start_date, "end_date": end_date}).fetchall()
 
 
 def grouped_spends_by_period(session: Session,
                              start_date: datetime,
                              end_date: datetime):
-    return session.execute(f"""
+    return session.execute(text(f"""
         select
             c.sector,
             c.name as category,
@@ -81,13 +82,13 @@ def grouped_spends_by_period(session: Session,
             and context is null
         group by c.name, c.sector
         order by c.sector, 3 desc;
-    """, {"start_date": start_date, "end_date": end_date}).fetchall()
+    """), {"start_date": start_date, "end_date": end_date}).fetchall()
 
 
 def grouped_spends_by_period_all(session: Session,
                                  start_date: datetime,
                                  end_date: datetime):
-    return session.execute(f"""
+    return session.execute(text(f"""
         select
             c.sector,
             c.name as category,
@@ -99,13 +100,13 @@ def grouped_spends_by_period_all(session: Session,
             and context is null
         group by c.name, c.sector
         order by c.sector, 3 desc;
-    """, {"start_date": start_date, "end_date": end_date}).fetchall()
+    """), {"start_date": start_date, "end_date": end_date}).fetchall()
 
 
 def grouped_sector_spends_by_period(session: Session,
                                     start_date: datetime,
                                     end_date: datetime):
-    return session.execute("""
+    return session.execute(text("""
         select
             c.sector,
             SUM(t.value)  as value_spent
@@ -116,13 +117,13 @@ def grouped_sector_spends_by_period(session: Session,
             and context is null
         group by c.sector
         order by c.sector, 2 desc;
-    """, {"start_date": start_date, "end_date": end_date}).fetchall()
+    """), {"start_date": start_date, "end_date": end_date}).fetchall()
 
 
 def all_transactions_by_period(session: Session,
                                start_date: datetime,
                                end_date: datetime):
-    return session.execute("""
+    return session.execute(text("""
         select
             t.id,
             t.date,
@@ -135,7 +136,7 @@ def all_transactions_by_period(session: Session,
         left join categories c on c.id = t.category_id
         where date between :start_date and :end_date
         order by date desc;
-    """, {"start_date": start_date, "end_date": end_date}).fetchall()
+    """), {"start_date": start_date, "end_date": end_date}).fetchall()
 
 
 def table_content(df: DataFrame):

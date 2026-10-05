@@ -4,6 +4,7 @@ import pandas as pd
 import financial.entities.db as db
 import plotly.graph_objs as go
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from pandas import DataFrame
 from datetime import datetime
@@ -16,13 +17,13 @@ dash.register_page(__name__)
 
 def data_frame() -> DataFrame:
     df: DataFrame = None  # type:ignore
-    df = pd.DataFrame(get_data(db.get_session()))
+    df = pd.DataFrame(get_data(db.get_session()), columns=["date_ref", "sum"])  # nopep8
 
     return df
 
 
 def get_data(session: Session):
-    return session.execute(f"""
+    return session.execute(text(f"""
         select
             DATE_FORMAT(date, '%m-%Y') as date_ref,
             SUM(value)*-1 as sum
@@ -30,7 +31,7 @@ def get_data(session: Session):
         where description LIKE '%CDB POS DI LIQ. BANCO INTER SA%'
         and date > '2021-08-31'
         group by date_ref;
-    """).fetchall()
+    """)).fetchall()
 
 
 df = data_frame()

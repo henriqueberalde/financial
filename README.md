@@ -1,19 +1,74 @@
 An application to organize my financial life.
 
 # Setup
-- python 3.10
-- poetry 1.8.2
-- mysql 8.0
+Requisitos:
+- Python 3.14
+- MySQL 8.4 (no Ubuntu: `sudo apt install mysql-server`; os comandos SQL abaixo rodam em `sudo mysql`)
+
+### 1. Banco de dados
+Crie os bancos e usuários esperados pelo projeto (configurados em `alembic.ini` e `financial/entities/db.py`):
+
+```sql
+CREATE DATABASE financial;
+CREATE USER 'financial'@'localhost' IDENTIFIED BY 'pass_123';
+GRANT ALL PRIVILEGES ON financial.* TO 'financial'@'localhost';
+
+-- usado apenas pelos testes
+CREATE DATABASE financial_test;
+CREATE USER 'financial_test'@'localhost' IDENTIFIED BY 'pass123';
+GRANT ALL PRIVILEGES ON financial_test.* TO 'financial_test'@'localhost';
+```
+
+### 2. Ambiente virtual
+Na raiz do projeto:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install --upgrade pip
+pip install -r requirements-dev.txt
+pip install -e .                 # instala o pacote `financial` em modo editável
+```
+
+Para sair do ambiente virtual: `deactivate`. Nas próximas vezes basta rodar `source .venv/bin/activate`.
+
+### 3. Migrations
+O `alembic.ini` não tem seção padrão, então informe o ambiente com `-n`:
+
+```bash
+alembic -n development upgrade head
+alembic -n test upgrade head     # banco de testes
+```
 
 # Usage
+Com o ambiente virtual ativado:
+
 ### CLI
-```> python3 ./financial/cli.py```
+```bash
+python financial/cli.py --help   # lista os comandos
+python financial/cli.py repl     # modo interativo
+```
+
+Fluxo básico de importação de um extrato do Inter (CSV separado por `;`, salvo em `assets/`):
+
+```bash
+python financial/cli.py inter-import-statement -f assets/extrato.csv
+python financial/cli.py merge-inter-transactions -user_id 1 -user_account <conta>
+```
 
 ### Dash Board
-```> python3 ./financial/dashboard/app.py```
+```bash
+python financial/dash_board/app.py
+```
+Acesse http://127.0.0.1:8050
 
 # Tests
-...
+Requer o banco `financial_test` com as migrations aplicadas:
+
+```bash
+pytest
+pycodestyle financial tests      # lint
+```
 
 # TODO
 * [ ] Use https://www.mage.ai/

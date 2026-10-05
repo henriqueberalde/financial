@@ -3,6 +3,7 @@ import calendar
 import pandas as pd
 import financial.entities.db as db
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from pandas import DataFrame
 from datetime import datetime
@@ -39,22 +40,25 @@ def every_month() -> DataFrame:
         df_local = pd.DataFrame(grouped_spends_by_period_all(db.get_session(),
                                 start_date,
                                 end_date))
+        if len(df_local) == 0:
+            continue
+
         if df is None:
             df = df_local
-        elif len(df_local) > 0:
+        else:
             df = df.merge(
                 df_local,
                 how="outer",
                 on=("sector", "category"))  # type: ignore
 
     # return df .sort_values(by=['sector'], na_position='first')
-    return df
+    return df if df is not None else DataFrame()
 
 
 def grouped_spends_by_period_all(session: Session,
                                  start_date: datetime,
                                  end_date: datetime):
-    return session.execute(f"""
+    return session.execute(text(f"""
         select
             c.sector,
             c.name as category,
@@ -66,7 +70,7 @@ def grouped_spends_by_period_all(session: Session,
             and context is null
         group by c.name, c.sector
         order by c.sector, 3 desc;
-    """, {"start_date": start_date, "end_date": end_date}).fetchall()
+    """), {"start_date": start_date, "end_date": end_date}).fetchall()
 
 
 layout = html.Div(children=[

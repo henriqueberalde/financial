@@ -1,6 +1,6 @@
 {
     "python.analysis.typeCheckingMode": "basic",
-    "python.defaultInterpreterPath": "/home/carlosb/.cache/pypoetry/virtualenvs/financial-EorOjaY6-py3.10/bin/python",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
     "python.linting.pycodestyleEnabled": true,
     "python.testing.pytestArgs": [
         "tests"

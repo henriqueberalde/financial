@@ -2,7 +2,7 @@ import hashlib
 import financial.entities.db as db
 
 from sqlalchemy.orm import Session
-from sqlalchemy import Column, Integer, String, DateTime, Numeric
+from sqlalchemy import Column, Integer, String, DateTime, Numeric, text
 from financial.entities.user import User
 
 
@@ -24,13 +24,13 @@ class InterTransaction(db.Base):
 
     @staticmethod
     def cleanup_inter_transactions(session: Session) -> None:
-        session.execute("DELETE FROM inter_transactions;")
-        session.execute("ALTER TABLE inter_transactions AUTO_INCREMENT = 1;")
+        session.execute(text("DELETE FROM inter_transactions;"))
+        session.execute(text("ALTER TABLE inter_transactions AUTO_INCREMENT = 1;"))  # nopep8
 
     @staticmethod
     def merge_to_transactions(session: Session, user: User) -> None:
         try:
-            session.execute("""INSERT INTO transactions (
+            session.execute(text("""INSERT INTO transactions (
                                     user_id,
                                     user_account,
                                     bank,
@@ -54,7 +54,7 @@ class InterTransaction(db.Base):
                                 from inter_transactions it
                                 left join transactions t on
                                     it.hash = t.original_hash
-                            where t.id is null;""", {
+                            where t.id is null;"""), {
                                 "user_id": user.id,
                                 "user_account": user.account,
                                 "bank": "077",

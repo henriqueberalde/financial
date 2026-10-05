@@ -46,8 +46,9 @@ def merge_inter_transactions(user_id: int, user_account: str) -> None:
                                            User(user_id, user_account))
 
     print('\nReprocessing Categorization')
-    Transaction.set_categories_by_rules(session,
-                                        session.query(CategoryRule).all())
+    conflicts = Transaction.set_categories_by_rules(
+        session, session.query(CategoryRule).all())
+    print_category_conflicts(conflicts)
 
     TransactionsCategories.set_categories_by_user(session)
 
@@ -108,8 +109,9 @@ def create_category_rule(category_name: str, rule: str) -> None:
     session.commit()
 
     print('\nReprocessing categories')
-    Transaction.set_categories_by_rules(session,
-                                        session.query(CategoryRule).all())
+    conflicts = Transaction.set_categories_by_rules(
+        session, session.query(CategoryRule).all())
+    print_category_conflicts(conflicts)
     TransactionsCategories.set_categories_by_user(session)
 
     print('\ndone')
@@ -129,6 +131,15 @@ def adjust(reason: str, transactions: str) -> None:
     Adjustment.add(session, reason, ids_param)
 
     print('\ndone')
+
+
+def print_category_conflicts(conflicts: list[str]) -> None:
+    if len(conflicts) == 0:
+        return
+
+    print(f'\n{len(conflicts)} transactions skipped (category conflict):')
+    for conflict in conflicts:
+        print(f'  {conflict}')
 
 
 if __name__ == "__main__":

@@ -1,10 +1,8 @@
-import pytest
 from sqlalchemy.orm import Session
 from sqlite3 import Timestamp
 from financial.entities.transaction import Transaction
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
-from financial.entities.normalization_error import NormalizationError
 
 
 def test_transaction_set_context_of_many(session: Session):
@@ -92,19 +90,19 @@ def test_set_categories_by_rules_many_matched_categories(session: Session):
     session.add(r2)
 
     t1 = __get_example_transaction("category1 category2")
+    t2 = __get_example_transaction("only category1")
 
     session.add(t1)
+    session.add(t2)
 
     session.commit()
 
-    with pytest.raises(
-            NormalizationError,
-            match="More than one category match\\. " +
-                  "Description: 'category1 category2', " +
-                  "Matches: \\['category1', 'category2'\\]"
-            ):
-        Transaction.set_categories_by_rules(session,
-                                            session.query(CategoryRule).all())
+    errors = Transaction.set_categories_by_rules(
+        session, session.query(CategoryRule).all())
+
+    assert errors == ["More than one category match. Description: 'category1 category2', Matches: ['category1', 'category2']"]  # nopep8
+    assert t1.category_id is None
+    assert t2.category_id == c1.id
 
 
 def test_set_categories_by_rules_many_conflict_erros(session: Session):
@@ -129,12 +127,11 @@ def test_set_categories_by_rules_many_conflict_erros(session: Session):
 
     session.commit()
 
-    with pytest.raises(NormalizationError) as e_info:
-        Transaction.set_categories_by_rules(session,
-                                            session.query(CategoryRule).all())
+    errors = Transaction.set_categories_by_rules(
+        session, session.query(CategoryRule).all())
 
-    assert e_info.value.messages[0] == "More than one category match. Description: '1 category1 category2', Matches: ['category1', 'category2']"  # nopep8
-    assert e_info.value.messages[1] == "More than one category match. Description: '2 category1 category2', Matches: ['category1', 'category2']"  # nopep8
+    assert errors[0] == "More than one category match. Description: '1 category1 category2', Matches: ['category1', 'category2']"  # nopep8
+    assert errors[1] == "More than one category match. Description: '2 category1 category2', Matches: ['category1', 'category2']"  # nopep8
 
 
 def __get_example_transaction(description: str) -> Transaction:

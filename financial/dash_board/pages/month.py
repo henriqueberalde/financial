@@ -2,21 +2,15 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 import dash
-import calendar
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objs as go
 import financial.entities.db as db
 
 from dash import callback
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from pandas import DataFrame
-from dash import Dash, html, dcc, Output, Input
+from dash import html, dcc, Output, Input
 from datetime import datetime
-from financial.entities.transaction import Transaction
-from dateutil.relativedelta import relativedelta
-from dateutil.parser import parse
 
 
 # external_css = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"  # nopep8
@@ -70,7 +64,7 @@ def transaction_gains_by_period(session: Session,
 def grouped_spends_by_period(session: Session,
                              start_date: datetime,
                              end_date: datetime):
-    return session.execute(text(f"""
+    return session.execute(text("""
         select
             c.sector,
             c.name as category,

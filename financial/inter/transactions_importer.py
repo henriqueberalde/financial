@@ -6,10 +6,7 @@ from pandas import DataFrame as PandasDataFrame
 from financial.inter.data_frame import DataFrame as InterDataFrame
 from financial.entities.category_rule import CategoryRule
 from financial.entities.normalization_error import NormalizationError
-from financial.entities.user import User
-from financial.entities.transaction import Transaction
 from financial.entities.inter_transaction import InterTransaction
-from financial.entities.transactions_categories import TransactionsCategories
 
 
 class TransactionsImporter(BaseTransactionsImporter):
@@ -44,7 +41,7 @@ class TransactionsImporter(BaseTransactionsImporter):
             self.data_frame = InterDataFrame(pandas_data_frame,
                                              self.category_rules)
 
-            print(f'\nNormalizing Data')
+            print('\nNormalizing Data')
             self.data_frame.normalize_date()
             self.data_frame.add_hash_column()
 

@@ -1,5 +1,3 @@
-from sqlalchemy import create_engine, MetaData
-
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config

@@ -1,5 +1,4 @@
 import dash
-import calendar
 import pandas as pd
 import financial.entities.db as db
 import plotly.graph_objs as go
@@ -7,10 +6,7 @@ import plotly.graph_objs as go
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from pandas import DataFrame
-from datetime import datetime
-from dash import html, dcc
-from pandas import DataFrame
-from datetime import datetime
+from dash import dcc
 
 dash.register_page(__name__)
 
@@ -23,7 +19,7 @@ def data_frame() -> DataFrame:
 
 
 def get_data(session: Session):
-    return session.execute(text(f"""
+    return session.execute(text("""
         select
             DATE_FORMAT(date, '%m-%Y') as date_ref,
             SUM(value)*-1 as sum

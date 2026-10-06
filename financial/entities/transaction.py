@@ -3,7 +3,7 @@ import re
 import financial.entities.db as db
 
 from sqlalchemy.orm import Session
-from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey, Table  # nopep8
+from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Iterable, Any
 from financial.entities.category import Category

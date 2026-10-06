@@ -8,8 +8,6 @@ from sqlalchemy.orm import Session
 from pandas import DataFrame
 from datetime import datetime
 from dash import html
-from pandas import DataFrame
-from datetime import datetime
 
 dash.register_page(__name__)
 

@@ -1,8 +1,6 @@
 import pandas
 import hashlib
-import pandas as pd
 
-from datetime import datetime
 from pandas import DataFrame as PandasDataFrame
 from financial.entities.category_rule import CategoryRule
 

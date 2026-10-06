@@ -1,6 +1,7 @@
 from dash import Dash, html, dcc
 import dash
 
+from financial import settings
 from financial.constants import DASHBOARD_STYLESHEET_URL
 
 app = Dash(
@@ -48,4 +49,6 @@ app.layout = html.Div(
 )
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host=settings.dashboard_host(),
+            port=settings.dashboard_port(),
+            debug=settings.dashboard_debug())

@@ -5,11 +5,10 @@ from sqlalchemy.orm import Session
 from click_repl import register_repl
 from financial.importers.inter.importer import TransactionsImporter
 from financial.models.user import User
-from financial.models.transaction import Transaction
 from financial.importers.inter.model import InterTransaction
 from financial.models.category import Category
 from financial.models.category_rule import CategoryRule
-from financial.services import adjustments, categorization
+from financial.services import adjustments, categorization, transactions
 from financial.models.transaction_category import TransactionCategory
 
 
@@ -52,7 +51,7 @@ def merge_inter_transactions(user_id: int, user_account: str) -> None:
 def set_context(c: str, ids: str) -> None:
     """Set context of a list of transactions"""
 
-    Transaction.set_context_of_many(db.get_session(), ids, c)
+    transactions.set_context(db.get_session(), ids, c)
 
     print('\ndone')
 

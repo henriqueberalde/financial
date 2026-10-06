@@ -24,8 +24,7 @@ class InterTransaction(db.Base):
 
     @staticmethod
     def cleanup_inter_transactions(session: Session) -> None:
-        session.execute(text("DELETE FROM inter_transactions;"))
-        session.execute(text("ALTER TABLE inter_transactions AUTO_INCREMENT = 1;"))  # nopep8
+        session.query(InterTransaction).delete()
 
     @staticmethod
     def merge_to_transactions(session: Session, user: User) -> None:

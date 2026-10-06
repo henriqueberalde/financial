@@ -31,7 +31,7 @@ def invoke(*args: str) -> Result:
 
 
 def test_inter_import_statement(session: Session):
-    invoke("inter-import-statement", "-f", "tests/test_import.csv")
+    invoke("inter-import-statement", "-f", "tests/data/inter_statement.csv")
 
     assert session.query(InterTransaction).count() == 2
 
@@ -40,7 +40,7 @@ def test_merge_inter_transactions_merges_and_categorizes(session: Session):
     vivo = Category(name="Vivo")
     session.add(CategoryRule(category=vivo, rule="vivo"))
     session.commit()
-    invoke("inter-import-statement", "-f", "tests/test_import.csv")
+    invoke("inter-import-statement", "-f", "tests/data/inter_statement.csv")
 
     result = invoke("merge-inter-transactions",
                     "-user_id", "1", "-user_account", "123")

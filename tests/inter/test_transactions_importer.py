@@ -29,7 +29,7 @@ def test_inter_importer(session: Session):
     session.add(gas_rule)
     session.commit()
 
-    importer.import_from_csv("tests/test_import.csv")
+    importer.import_from_csv("tests/data/inter_statement.csv")
 
     transactions = session.query(InterTransaction).all()
 
@@ -69,7 +69,8 @@ def test_inter_importer_reports_save_errors(session: Session,
 
     monkeypatch.setattr(PandasDataFrame, "to_sql", failing_to_sql)
 
-    TransactionsImporter(session).import_from_csv("tests/test_import.csv")
+    importer = TransactionsImporter(session)
+    importer.import_from_csv("tests/data/inter_statement.csv")
 
     assert "Error while saving data to db. data too long" in capsys.readouterr().out  # nopep8
     assert session.query(InterTransaction).count() == 0
@@ -80,8 +81,8 @@ def test_inter_importer_replaces_previous_import(session: Session):
     session.commit()
     importer = TransactionsImporter(session)
 
-    importer.import_from_csv("tests/test_import.csv")
-    importer.import_from_csv("tests/test_import.csv")
+    importer.import_from_csv("tests/data/inter_statement.csv")
+    importer.import_from_csv("tests/data/inter_statement.csv")
 
     assert session.query(InterTransaction).count() == 2
     assert len(importer.category_rules) == 1

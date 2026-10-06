@@ -1,9 +1,0 @@
--r requirements.txt
-pytest==9.1.1
-pycodestyle==2.15.0
-notebook==7.6.3
-ipykernel==7.4.0
-nbformat==5.11.1
-nbstripout==0.9.1
-plotly==7.1.0
-pytest-cov==7.1.0

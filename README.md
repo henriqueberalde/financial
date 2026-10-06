@@ -21,8 +21,7 @@ From the project root:
 python3 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install --upgrade pip
-pip install -r requirements-dev.txt
-pip install -e .                 # installs the `financial` package in editable mode
+pip install -e ".[dev]"          # installs the `financial` package in editable mode with dev tools
 ```
 
 To leave the virtual environment: `deactivate`. Next time, just run `source .venv/bin/activate`.
@@ -92,7 +91,7 @@ pytest --cov-report=html         # browsable report in htmlcov/index.html
 pycodestyle financial tests      # lint
 ```
 
-Coverage (lines and branches) is measured with `pytest-cov`, and `pytest` fails below 95% (`.coveragerc`).
+Coverage (lines and branches) is measured with `pytest-cov`, and `pytest` fails below 95% (`pyproject.toml`).
 To build sample transactions in tests, use `make_transaction` from `tests/factories.py`.
 
 # TODO

@@ -32,7 +32,7 @@ When adding or changing features:
 
 ## Testing
 
-- `pytest` runs the unit tests with coverage; it fails below 95% (`.coveragerc`)
+- `pytest` runs the unit tests with coverage; it fails below 95% (`pyproject.toml`)
 - Tests use a fresh in-memory SQLite database per test (`tests/conftest.py`); never point tests to a real database
 - Keep SQL portable (ORM or standard SQL) so it runs on both MySQL and SQLite
 - Build test transactions with `tests/factories.py`

@@ -6,17 +6,12 @@ Requisitos:
 - MySQL 8.4 (no Ubuntu: `sudo apt install mysql-server`; os comandos SQL abaixo rodam em `sudo mysql`)
 
 ### 1. Banco de dados
-Crie os bancos e usuários esperados pelo projeto (configurados em `alembic.ini` e `financial/entities/db.py`):
+Crie o banco e o usuário esperados pelo projeto (configurados em `alembic.ini` e `financial/entities/db.py`):
 
 ```sql
 CREATE DATABASE financial;
 CREATE USER 'financial'@'localhost' IDENTIFIED BY 'pass_123';
 GRANT ALL PRIVILEGES ON financial.* TO 'financial'@'localhost';
-
--- usado apenas pelos testes
-CREATE DATABASE financial_test;
-CREATE USER 'financial_test'@'localhost' IDENTIFIED BY 'pass123';
-GRANT ALL PRIVILEGES ON financial_test.* TO 'financial_test'@'localhost';
 ```
 
 ### 2. Ambiente virtual
@@ -37,7 +32,6 @@ O `alembic.ini` não tem seção padrão, então informe o ambiente com `-n`:
 
 ```bash
 alembic -n development upgrade head
-alembic -n test upgrade head     # banco de testes
 ```
 
 # Usage
@@ -76,7 +70,7 @@ nbstripout --install
 ```
 
 # Tests
-Requer o banco `financial_test` com as migrations aplicadas:
+Os testes usam um banco SQLite em memória, criado do zero a cada teste a partir dos models. Não é preciso MySQL:
 
 ```bash
 pytest

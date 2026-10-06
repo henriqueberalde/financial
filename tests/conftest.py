@@ -5,12 +5,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
-import financial.entities.db as db
+import financial.database as db
 
-# Mapped classes must be imported so their tables are in db.Base.metadata
-import financial.entities.adjustement  # noqa: F401
-import financial.entities.inter_transaction  # noqa: F401
-import financial.entities.transactions_categories  # noqa: F401
+# Importing the packages registers every table in db.Base.metadata
+import financial.importers.inter  # noqa: F401
+import financial.models  # noqa: F401
 
 
 @pytest.fixture()

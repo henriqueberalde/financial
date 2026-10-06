@@ -1,16 +1,15 @@
 import click
-import financial.entities.db as db
+import financial.database as db
 
 from sqlalchemy.orm import Session
 from click_repl import register_repl
-from financial.inter.transactions_importer import TransactionsImporter
-from financial.entities.user import User
-from financial.entities.transaction import Transaction
-from financial.entities.inter_transaction import InterTransaction
-from financial.entities.category import Category
-from financial.entities.category_rule import CategoryRule
-from financial.entities.transactions_categories import TransactionsCategories
-from financial.entities.adjustement import Adjustment
+from financial.importers.inter.importer import TransactionsImporter
+from financial.models.user import User
+from financial.importers.inter import staging
+from financial.models.category import Category
+from financial.models.category_rule import CategoryRule
+from financial.services import adjustments, categorization, transactions
+from financial.models.transaction_category import TransactionCategory
 
 
 @click.group()
@@ -38,8 +37,7 @@ def merge_inter_transactions(user_id: int, user_account: str) -> None:
     session = db.get_session()
 
     print('\nMerging inter transactions into transactions')
-    InterTransaction.merge_to_transactions(session,
-                                           User(user_id, user_account))
+    staging.merge_into_transactions(session, User(user_id, user_account))
 
     reprocess_categories(session)
 
@@ -52,7 +50,7 @@ def merge_inter_transactions(user_id: int, user_account: str) -> None:
 def set_context(c: str, ids: str) -> None:
     """Set context of a list of transactions"""
 
-    Transaction.set_context_of_many(db.get_session(), ids, c)
+    transactions.set_context(db.get_session(), ids, c)
 
     print('\ndone')
 
@@ -78,13 +76,13 @@ def create_category(name: str, sector: str) -> None:
 def set_category(category_name: str, transaction_id: int) -> None:
     """Set transaction`s category manualy"""
     session = db.get_session()
-    category = find_category(session, category_name)
+    category = categorization.find_category(session, category_name)
 
-    tc = TransactionsCategories(category_id=category.id,
-                                transaction_id=transaction_id)
+    tc = TransactionCategory(category_id=category.id,
+                             transaction_id=transaction_id)
     session.add(tc)
     session.commit()
-    TransactionsCategories.set_categories_by_user(session)
+    categorization.set_categories_by_user(session)
 
     print('\ndone')
 
@@ -95,7 +93,7 @@ def set_category(category_name: str, transaction_id: int) -> None:
 def create_category_rule(category_name: str, rule: str) -> None:
     """Create a rule as a regex expression for categorize a transaction"""
     session = db.get_session()
-    category = find_category(session, category_name)
+    category = categorization.find_category(session, category_name)
 
     session.add(CategoryRule(category_id=category.id, rule=rule))
     session.commit()
@@ -116,22 +114,14 @@ def adjust(reason: str, transactions: str) -> None:
     for id in transactions.split(" "):
         ids_param.append(int(id))  # type: ignore
 
-    Adjustment.add(session, reason, ids_param)
+    adjustments.add_adjustment(session, reason, ids_param)
 
     print('\ndone')
 
 
-def find_category(session: Session, name: str) -> Category:
-    return session.query(Category).filter_by(name=name).one()
-
-
 def reprocess_categories(session: Session) -> None:
     print('\nReprocessing categories')
-    conflicts = Transaction.set_categories_by_rules(
-        session, session.query(CategoryRule).all())
-    print_category_conflicts(conflicts)
-
-    TransactionsCategories.set_categories_by_user(session)
+    print_category_conflicts(categorization.reprocess_categories(session))
 
 
 def print_category_conflicts(conflicts: list[str]) -> None:
@@ -143,6 +133,10 @@ def print_category_conflicts(conflicts: list[str]) -> None:
         print(f'  {conflict}')
 
 
-if __name__ == "__main__":
+def main() -> None:
     register_repl(cli)
     cli()
+
+
+if __name__ == "__main__":
+    main()

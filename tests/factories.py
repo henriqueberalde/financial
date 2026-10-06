@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from financial.entities.transaction import Transaction
+from financial.models.transaction import Transaction
 
 
 def make_transaction(description: str = "transaction",

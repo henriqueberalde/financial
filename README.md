@@ -21,8 +21,7 @@ From the project root:
 python3 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install --upgrade pip
-pip install -r requirements-dev.txt
-pip install -e .                 # installs the `financial` package in editable mode
+pip install -e ".[dev]"          # installs the `financial` package in editable mode with dev tools
 ```
 
 To leave the virtual environment: `deactivate`. Next time, just run `source .venv/bin/activate`.
@@ -39,7 +38,7 @@ cp .env_example .env             # then set the database password in .env
 | `DATABASE_URL` | SQLAlchemy URL of the application database (CLI, notebooks and Alembic) |
 
 Variables set in the environment take precedence over `.env`.
-Library settings and business rules (Inter CSV layout, bank code, etc.) live in `financial/constants.py`.
+Library settings and business rules live in the `constants.py` of the package they belong to (e.g. the Inter CSV layout and bank code in `financial/importers/inter/constants.py`).
 
 ### 4. Migrations
 Alembic uses `DATABASE_URL` from `.env`:
@@ -59,15 +58,15 @@ With the virtual environment activated:
 
 ### CLI
 ```bash
-python financial/cli.py --help   # lists the commands
-python financial/cli.py repl     # interactive mode
+financial --help                 # lists the commands
+financial repl                   # interactive mode
 ```
 
-Basic flow to import a Banco Inter statement (`;`-separated CSV, saved in `assets/`):
+Basic flow to import a Banco Inter statement (`;`-separated CSV, saved in `data/`):
 
 ```bash
-python financial/cli.py inter-import-statement -f assets/statement.csv
-python financial/cli.py merge-inter-transactions -user_id 1 -user_account <account>
+financial inter-import-statement -f data/statement.csv
+financial merge-inter-transactions -user_id 1 -user_account <account>
 ```
 
 ### Jupyter Notebook
@@ -83,6 +82,19 @@ Notebook outputs contain real financial data. To keep them out of commits, enabl
 nbstripout --install
 ```
 
+# Project structure
+| Path | Contents |
+|---|---|
+| `financial/cli.py` | `financial` command (CLI and REPL) |
+| `financial/models/` | SQLAlchemy tables |
+| `financial/services/` | Business operations: categorization, adjustments, transaction contexts |
+| `financial/importers/inter/` | Banco Inter statement import: parsing, staging table, merge and constants |
+| `financial/settings.py`, `financial/database.py` | `.env` settings and database session |
+| `alembic/` | Database migrations |
+| `notebooks/` | Exploratory analyses |
+| `data/` | Personal statements and dumps (not versioned) |
+| `tests/` | Unit tests, mirroring `financial/`; fixtures in `tests/data/` |
+
 # Tests
 Tests use an in-memory SQLite database, created from the models for every test. MySQL is not needed:
 
@@ -92,7 +104,7 @@ pytest --cov-report=html         # browsable report in htmlcov/index.html
 pycodestyle financial tests      # lint
 ```
 
-Coverage (lines and branches) is measured with `pytest-cov`, and `pytest` fails below 95% (`.coveragerc`).
+Coverage (lines and branches) is measured with `pytest-cov`, and `pytest` fails below 95% (`pyproject.toml`).
 To build sample transactions in tests, use `make_transaction` from `tests/factories.py`.
 
 # TODO

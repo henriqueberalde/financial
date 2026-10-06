@@ -2,7 +2,7 @@
 
 An application to organize my financial life.
 
-Interfaces: the CLI (`financial/cli.py`, with a REPL) and the Jupyter notebooks in `notebooks/`.
+Interfaces: the CLI (`financial` command from `financial/cli.py`, with a REPL) and the Jupyter notebooks in `notebooks/`.
 
 ## Key Architecture Decisions
 
@@ -13,13 +13,32 @@ Interfaces: the CLI (`financial/cli.py`, with a REPL) and the Jupyter notebooks 
 - **Branches from main** Create branches for features, fixes, refactoring starting from the `main` branch.
 - **Migrations** Never update migrations files, database updates must always be in new migration files.
 
+## Project Structure
+
+```
+financial/
+├── cli.py, settings.py, database.py, hashing.py
+├── models/       # SQLAlchemy tables only: columns, relationships, simple helpers
+├── services/     # business operations that use a session (categorization, adjustments, ...)
+└── importers/
+    ├── base.py
+    └── <bank>/   # everything specific to one bank: importer, statement parsing, staging model, constants
+tests/            # mirrors financial/; CSV fixtures in tests/data/
+notebooks/        # exploratory analyses
+data/             # personal statements and dumps, never versioned
+```
+
+- Business logic goes into `services/` (or the bank package), never into models or the CLI
+- A new bank is a new package under `financial/importers/`
+- New models must be imported in `financial/models/__init__.py` so their tables are registered
+
 ## Code Conventions
 - Follow SOLID principles
 - Follow REST API and MVP conventions
 - Build minimal line numbers classes / functions and files
 - Always extract configuration values in .env / .env_example
   - Secrets and per-environment values: `.env`, read through `financial/settings.py`
-  - Library settings and business decisions: `financial/constants.py`
+  - Library settings and business decisions: `constants.py` of the package they belong to (e.g. `financial/importers/inter/constants.py`)
 - Small commits, one per feature or feature stage
 
 ## Documentation
@@ -32,7 +51,7 @@ When adding or changing features:
 
 ## Testing
 
-- `pytest` runs the unit tests with coverage; it fails below 95% (`.coveragerc`)
+- `pytest` runs the unit tests with coverage; it fails below 95% (`pyproject.toml`)
 - Tests use a fresh in-memory SQLite database per test (`tests/conftest.py`); never point tests to a real database
 - Keep SQL portable (ORM or standard SQL) so it runs on both MySQL and SQLite
 - Build test transactions with `tests/factories.py`

@@ -3,17 +3,17 @@ import pytest
 from click.testing import CliRunner, Result
 from sqlalchemy.orm import Session
 
-import financial.entities.db as db
+import financial.database as db
 
 from factories import make_transaction
 
-from financial.cli import cli, print_category_conflicts
-from financial.entities.adjustement import Adjustment
-from financial.entities.category import Category
-from financial.entities.category_rule import CategoryRule
-from financial.entities.inter_transaction import InterTransaction
-from financial.entities.transaction import Transaction
-from financial.entities.transactions_categories import TransactionsCategories
+from financial.cli import cli, main, print_category_conflicts
+from financial.models.adjustment import Adjustment
+from financial.models.category import Category
+from financial.models.category_rule import CategoryRule
+from financial.importers.inter.model import InterTransaction
+from financial.models.transaction import Transaction
+from financial.models.transaction_category import TransactionCategory
 
 
 @pytest.fixture(autouse=True)
@@ -31,7 +31,7 @@ def invoke(*args: str) -> Result:
 
 
 def test_inter_import_statement(session: Session):
-    invoke("inter-import-statement", "-f", "tests/test_import.csv")
+    invoke("inter-import-statement", "-f", "tests/data/inter_statement.csv")
 
     assert session.query(InterTransaction).count() == 2
 
@@ -40,7 +40,7 @@ def test_merge_inter_transactions_merges_and_categorizes(session: Session):
     vivo = Category(name="Vivo")
     session.add(CategoryRule(category=vivo, rule="vivo"))
     session.commit()
-    invoke("inter-import-statement", "-f", "tests/test_import.csv")
+    invoke("inter-import-statement", "-f", "tests/data/inter_statement.csv")
 
     result = invoke("merge-inter-transactions",
                     "-user_id", "1", "-user_account", "123")
@@ -77,7 +77,7 @@ def test_set_category(session: Session):
     invoke("set-category", "-category_name", "Gas",
            "-transaction_id", str(transaction.id))
 
-    assert session.query(TransactionsCategories).count() == 1
+    assert session.query(TransactionCategory).count() == 1
     assert session.get(Transaction, transaction.id).category_id == \
         category.id
 
@@ -124,6 +124,16 @@ def test_print_category_conflicts_prints_nothing_without_conflicts(capsys):
     print_category_conflicts([])
 
     assert capsys.readouterr().out == ""
+
+
+def test_main_registers_repl_and_runs_cli(monkeypatch, capsys):
+    monkeypatch.setattr("sys.argv", ["financial", "--help"])
+
+    with pytest.raises(SystemExit) as exit_info:
+        main()
+
+    assert exit_info.value.code == 0
+    assert "repl" in capsys.readouterr().out
 
 
 def __add_transactions(session: Session,

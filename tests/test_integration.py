@@ -4,7 +4,6 @@ from financial.entities.inter_transaction import InterTransaction
 from financial.entities.user import User
 from financial.entities.adjustement import Adjustment
 from financial.entities.transaction import Transaction
-from sqlalchemy.engine.row import Row
 
 
 def test_keep_original_transaction_after_merge(session: Session):

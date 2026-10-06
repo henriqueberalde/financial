@@ -1,44 +1,29 @@
 import pytest
-import financial.entities.db as db
-from sqlalchemy import text
+
+from collections.abc import Iterator
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+from sqlalchemy.pool import StaticPool
 
-from financial.entities.user import User
-from financial.inter.transactions_importer import TransactionsImporter
+import financial.entities.db as db
 
-import logging
-
-# not sure how to 'bind' to the logger in __main__.py
-
-__session = Session(db.get_engine("mysql+pymysql://financial_test:pass123@localhost/financial_test"))  # nopep8
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+# Mapped classes must be imported so their tables are in db.Base.metadata
+import financial.entities.adjustement  # noqa: F401
+import financial.entities.inter_transaction  # noqa: F401
+import financial.entities.transactions_categories  # noqa: F401
 
 
 @pytest.fixture()
-def session(scope="function") -> Session:
-    __session.expunge_all()
-    __session.execute(text("DELETE FROM transactions_categories;"))
-    __session.execute(text("DELETE FROM transactions_adjustments;"))
-    __session.execute(text("DELETE FROM adjustments;"))
-    __session.execute(text("DELETE FROM transactions;"))
-    __session.execute(text("DELETE FROM inter_transactions;"))
-    __session.execute(text("DELETE FROM category_rules;"))
-    __session.execute(text("DELETE FROM categories;"))
+def session() -> Iterator[Session]:
+    """Session bound to a new in-memory SQLite database for each test."""
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    db.Base.metadata.create_all(engine)
 
-    __session.execute(text("ALTER TABLE transactions AUTO_INCREMENT = 1;"))
-    __session.execute(text("ALTER TABLE transactions_adjustments AUTO_INCREMENT = 1;"))  # nopep8
-    __session.execute(text("ALTER TABLE adjustments AUTO_INCREMENT = 1;"))
-    __session.execute(text("ALTER TABLE inter_transactions AUTO_INCREMENT = 1;"))  # nopep8
-    __session.execute(text("ALTER TABLE category_rules AUTO_INCREMENT = 1;"))
-    __session.execute(text("ALTER TABLE categories AUTO_INCREMENT = 1;"))
-    __session.commit()
+    with Session(engine) as session:
+        yield session
 
-    return __session  # nopep8
-
-
-@pytest.fixture(scope="function")
-def interImporterUser1():
-    """
-    Instance of Inter`s TransactionsImporter with id:1, account: user_account
-    """
-    return TransactionsImporter(session())
+    engine.dispose()

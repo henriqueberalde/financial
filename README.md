@@ -12,11 +12,6 @@ Create the application database and user. Choose a password and use it in `.env`
 CREATE DATABASE financial;
 CREATE USER 'financial'@'localhost' IDENTIFIED BY '<password>';
 GRANT ALL PRIVILEGES ON financial.* TO 'financial'@'localhost';
-
--- used by the tests only
-CREATE DATABASE financial_test;
-CREATE USER 'financial_test'@'localhost' IDENTIFIED BY 'pass123';
-GRANT ALL PRIVILEGES ON financial_test.* TO 'financial_test'@'localhost';
 ```
 
 ### 2. Virtual environment
@@ -53,10 +48,10 @@ Alembic uses `DATABASE_URL` from `.env`:
 alembic upgrade head
 ```
 
-To migrate another database (the test one, for example), override the variable:
+To migrate another database, override the variable:
 
 ```bash
-DATABASE_URL=mysql+pymysql://financial_test:pass123@localhost/financial_test alembic upgrade head
+DATABASE_URL=<url> alembic upgrade head
 ```
 
 # Usage
@@ -89,12 +84,16 @@ nbstripout --install
 ```
 
 # Tests
-Requires the `financial_test` database with the migrations applied:
+Tests use an in-memory SQLite database, created from the models for every test. MySQL is not needed:
 
 ```bash
-pytest
+pytest                           # tests + coverage report
+pytest --cov-report=html         # browsable report in htmlcov/index.html
 pycodestyle financial tests      # lint
 ```
+
+Coverage (lines and branches) is measured with `pytest-cov`, and `pytest` fails below 95% (`.coveragerc`).
+To build sample transactions in tests, use `make_transaction` from `tests/factories.py`.
 
 # TODO
 * [ ] Use https://www.mage.ai/

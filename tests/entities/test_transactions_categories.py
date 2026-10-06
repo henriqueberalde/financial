@@ -1,19 +1,11 @@
-from sqlalchemy.inspection import inspect
-from sqlite3 import Timestamp
+from factories import make_transaction
 from financial.entities.transaction import Transaction
 from financial.entities.category import Category
 from financial.entities.transactions_categories import TransactionsCategories
 
 
 def test_set_transactions_categories(session):
-    transaction = Transaction(
-        user_id=1,
-        user_account="a",
-        bank=" ",
-        date=Timestamp(year=2022, month=10, day=1),
-        description="test",
-        value=1,
-        balance=1)
+    transaction = make_transaction("test")
     category = Category(name="TestCategory")
     session.add(transaction)
     session.add(category)
@@ -32,3 +24,17 @@ def test_set_transactions_categories(session):
     print(t_db.__dict__)
 
     assert t_db.category_id == category.id
+
+
+def test_set_categories_by_user_reports_errors_without_raising(monkeypatch,
+                                                               capsys):
+    def failing_set(session):
+        raise RuntimeError("database unavailable")
+
+    monkeypatch.setattr(TransactionsCategories,
+                        "set_transactions_categories",
+                        failing_set)
+
+    TransactionsCategories.set_categories_by_user(None)  # type: ignore
+
+    assert "Error while setting specific categorization. database unavailable" in capsys.readouterr().out  # nopep8

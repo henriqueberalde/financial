@@ -1,8 +1,55 @@
+import hashlib
+
 from sqlalchemy.orm import Session
-from sqlite3 import Timestamp
+from datetime import datetime
 from financial.entities.transaction import Transaction
 from financial.entities.inter_transaction import InterTransaction
 from financial.entities.user import User
+
+
+def test_hash_is_generated_from_date_description_value_and_balance():
+    inter_transaction = InterTransaction(date=datetime(2022, 1, 1),
+                                         description="Test1",
+                                         value=1.1,
+                                         balance=111.1)
+
+    assert inter_transaction.hash == hashlib.sha256(
+        b"2022-01-01 00:00:00Test11.1111.1").hexdigest()
+
+
+def test_hash_is_kept_when_given():
+    inter_transaction = InterTransaction(date=datetime(2022, 1, 1),
+                                         description="Test1",
+                                         value=1.1,
+                                         balance=111.1,
+                                         hash="given")
+
+    assert inter_transaction.hash == "given"
+
+
+def test_cleanup_inter_transactions_removes_all_rows(session: Session):
+    session.add(InterTransaction(date=datetime(2022, 1, 1),
+                                 description="Test1",
+                                 value=1.1,
+                                 balance=111.1))
+    session.commit()
+
+    InterTransaction.cleanup_inter_transactions(session)
+
+    assert session.query(InterTransaction).count() == 0
+
+
+def test_merge_to_transactions_rolls_back_on_error(session: Session, capsys):
+    session.add(InterTransaction(date=datetime(2022, 1, 1),
+                                 description="Test1",
+                                 value=1.1,
+                                 balance=111.1))
+    session.commit()
+
+    InterTransaction.merge_to_transactions(session, None)  # type: ignore
+
+    assert "Error while merging transactions from inter." in capsys.readouterr().out  # nopep8
+    assert session.query(Transaction).count() == 0
 
 
 def test_merge_to_transactions_add_columns(session: Session):
@@ -10,7 +57,7 @@ def test_merge_to_transactions_add_columns(session: Session):
     user = User(99, "test_user_account")
 
     it1 = InterTransaction(
-        date=Timestamp(2022, 1, 1),
+        date=datetime(2022, 1, 1),
         description="Test1",
         value=1.1,
         balance=111.1)
@@ -33,13 +80,13 @@ def test_merge_to_transactions(session: Session):
     user = User(1, "123")
 
     it1 = InterTransaction(
-        date=Timestamp(2022, 1, 1),
+        date=datetime(2022, 1, 1),
         description="Test1",
         value=1.1,
         balance=111.1)
 
     it2 = InterTransaction(
-        date=Timestamp(2022, 1, 1),
+        date=datetime(2022, 1, 1),
         description="Test2",
         value=2.2,
         balance=222.2)
@@ -76,25 +123,25 @@ def test_merge_to_transactions_existing_transactions(session: Session):
     user = User(1, "123")
 
     it1 = InterTransaction(
-        date=Timestamp(2022, 1, 1),
+        date=datetime(2022, 1, 1),
         description="Test1",
         value=1.1,
         balance=111.1)
 
     it2 = InterTransaction(
-        date=Timestamp(2022, 1, 1),
+        date=datetime(2022, 1, 1),
         description="Test2",
         value=2.2,
         balance=222.2)
 
     it3 = InterTransaction(
-        date=Timestamp(2022, 1, 1),
+        date=datetime(2022, 1, 1),
         description="Test3",
         value=3.3,
         balance=333.3)
 
     t1 = Transaction(
-        date=Timestamp(2022, 1, 1),
+        date=datetime(2022, 1, 1),
         description="Test1",
         value=1.1,
         balance=111.1,
@@ -103,7 +150,7 @@ def test_merge_to_transactions_existing_transactions(session: Session):
         user_account="123")
 
     t3 = Transaction(
-        date=Timestamp(2022, 1, 1),
+        date=datetime(2022, 1, 1),
         description="Test3",
         value=3.3,
         balance=333.3,
@@ -137,7 +184,7 @@ def test_merge_to_transactions_set_original_value(session):
     user = User(99, "test_user_account")
 
     it1 = InterTransaction(
-        date=Timestamp(2022, 1, 1),
+        date=datetime(2022, 1, 1),
         description="Test1",
         value=34,
         balance=111.1)

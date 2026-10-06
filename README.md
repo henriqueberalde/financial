@@ -82,6 +82,19 @@ Notebook outputs contain real financial data. To keep them out of commits, enabl
 nbstripout --install
 ```
 
+# Project structure
+| Path | Contents |
+|---|---|
+| `financial/cli.py` | `financial` command (CLI and REPL) |
+| `financial/models/` | SQLAlchemy tables |
+| `financial/services/` | Business operations: categorization, adjustments, transaction contexts |
+| `financial/importers/inter/` | Banco Inter statement import: parsing, staging table, merge and constants |
+| `financial/settings.py`, `financial/database.py` | `.env` settings and database session |
+| `alembic/` | Database migrations |
+| `notebooks/` | Exploratory analyses |
+| `data/` | Personal statements and dumps (not versioned) |
+| `tests/` | Unit tests, mirroring `financial/`; fixtures in `tests/data/` |
+
 # Tests
 Tests use an in-memory SQLite database, created from the models for every test. MySQL is not needed:
 

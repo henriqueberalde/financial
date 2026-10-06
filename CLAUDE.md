@@ -13,6 +13,25 @@ Interfaces: the CLI (`financial` command from `financial/cli.py`, with a REPL) a
 - **Branches from main** Create branches for features, fixes, refactoring starting from the `main` branch.
 - **Migrations** Never update migrations files, database updates must always be in new migration files.
 
+## Project Structure
+
+```
+financial/
+├── cli.py, settings.py, database.py, hashing.py
+├── models/       # SQLAlchemy tables only: columns, relationships, simple helpers
+├── services/     # business operations that use a session (categorization, adjustments, ...)
+└── importers/
+    ├── base.py
+    └── <bank>/   # everything specific to one bank: importer, statement parsing, staging model, constants
+tests/            # mirrors financial/; CSV fixtures in tests/data/
+notebooks/        # exploratory analyses
+data/             # personal statements and dumps, never versioned
+```
+
+- Business logic goes into `services/` (or the bank package), never into models or the CLI
+- A new bank is a new package under `financial/importers/`
+- New models must be imported in `financial/models/__init__.py` so their tables are registered
+
 ## Code Conventions
 - Follow SOLID principles
 - Follow REST API and MVP conventions

@@ -62,6 +62,19 @@ python financial/dash_board/app.py
 ```
 Acesse http://127.0.0.1:8050
 
+### Jupyter Notebook
+Análises exploratórias ficam em `notebooks/`. Com o ambiente virtual ativado:
+
+```bash
+jupyter notebook notebooks/analise_financeira.ipynb
+```
+
+As saídas dos notebooks contêm dados financeiros reais. Para não commitá-las, ative o `nbstripout` uma vez por clone (ele limpa as saídas no `git add`, sem alterar o arquivo local):
+
+```bash
+nbstripout --install
+```
+
 # Tests
 Requer o banco `financial_test` com as migrations aplicadas:
 

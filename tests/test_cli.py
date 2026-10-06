@@ -8,7 +8,7 @@ import financial.entities.db as db
 from factories import make_transaction
 
 from financial.cli import cli, print_category_conflicts
-from financial.entities.adjustement import Adjustment
+from financial.entities.adjustment import Adjustment
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
 from financial.entities.inter_transaction import InterTransaction

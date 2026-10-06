@@ -1,7 +1,7 @@
 import pytest
 
 from factories import make_transaction
-from financial.entities.adjustement import Adjustment
+from financial.entities.adjustment import Adjustment
 from sqlalchemy.orm import Session
 
 

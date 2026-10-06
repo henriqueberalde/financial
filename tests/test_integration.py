@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from financial.inter.transactions_importer import TransactionsImporter
 from financial.entities.inter_transaction import InterTransaction
 from financial.entities.user import User
-from financial.entities.adjustement import Adjustment
+from financial.entities.adjustment import Adjustment
 from financial.entities.transaction import Transaction
 
 

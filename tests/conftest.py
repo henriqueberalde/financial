@@ -8,7 +8,7 @@ from sqlalchemy.pool import StaticPool
 import financial.entities.db as db
 
 # Mapped classes must be imported so their tables are in db.Base.metadata
-import financial.entities.adjustement  # noqa: F401
+import financial.entities.adjustment  # noqa: F401
 import financial.entities.inter_transaction  # noqa: F401
 import financial.entities.transactions_categories  # noqa: F401
 

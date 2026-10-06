@@ -10,7 +10,7 @@ from financial.entities.inter_transaction import InterTransaction
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
 from financial.entities.transactions_categories import TransactionsCategories
-from financial.entities.adjustement import Adjustment
+from financial.entities.adjustment import Adjustment
 
 
 @click.group()

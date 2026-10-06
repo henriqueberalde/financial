@@ -34,10 +34,6 @@ class TransactionsImporter(BaseTransactionsImporter):
             print(f'{self.file_path}')
             pandas_data_frame = self.__load_csv()
 
-            if (pandas_data_frame is None):
-                print('\nEmpty file, nothing was loaded')
-                return None
-
             print(f'{len(pandas_data_frame.index)} transactions found on csv file')  # nopep8
 
             self.__fetch_category_rules()

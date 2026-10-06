@@ -1,4 +1,3 @@
-from sqlalchemy.inspection import inspect
 from sqlite3 import Timestamp
 from financial.entities.transaction import Transaction
 from financial.entities.category import Category

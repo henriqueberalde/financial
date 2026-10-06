@@ -1,7 +1,6 @@
 import click
 import financial.entities.db as db
 
-from sqlalchemy import delete
 from sqlalchemy.orm import Session
 from click_repl import register_repl
 from financial.inter.transactions_importer import TransactionsImporter

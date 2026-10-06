@@ -3,8 +3,6 @@ import financial.entities.db as db
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from financial.entities.user import User
-from financial.inter.transactions_importer import TransactionsImporter
 
 import logging
 
@@ -34,11 +32,3 @@ def session(scope="function") -> Session:
     __session.commit()
 
     return __session  # nopep8
-
-
-@pytest.fixture(scope="function")
-def interImporterUser1():
-    """
-    Instance of Inter`s TransactionsImporter with id:1, account: user_account
-    """
-    return TransactionsImporter(session())

@@ -13,9 +13,6 @@ from financial.entities.transactions_categories import TransactionsCategories
 from financial.entities.adjustement import Adjustment
 
 
-session: Session = db.get_session()
-
-
 @click.group()
 def cli():
     pass
@@ -26,10 +23,8 @@ def cli():
 def inter_import_statement(f: str) -> None:
     """Financial Statement Import."""
 
-    file_path = f
-
-    importer = TransactionsImporter(session)
-    importer.import_from_csv(file_path)
+    importer = TransactionsImporter(db.get_session())
+    importer.import_from_csv(f)
 
     print('\ndone')
 
@@ -40,16 +35,13 @@ def inter_import_statement(f: str) -> None:
 def merge_inter_transactions(user_id: int, user_account: str) -> None:
     """Merge inter_transactions into transactions to be categorized"""
 
+    session = db.get_session()
+
     print('\nMerging inter transactions into transactions')
     InterTransaction.merge_to_transactions(session,
                                            User(user_id, user_account))
 
-    print('\nReprocessing Categorization')
-    conflicts = Transaction.set_categories_by_rules(
-        session, session.query(CategoryRule).all())
-    print_category_conflicts(conflicts)
-
-    TransactionsCategories.set_categories_by_user(session)
+    reprocess_categories(session)
 
     print('\ndone')
 
@@ -60,7 +52,7 @@ def merge_inter_transactions(user_id: int, user_account: str) -> None:
 def set_context(c: str, ids: str) -> None:
     """Set context of a list of transactions"""
 
-    Transaction.set_context_of_many(session, ids, c)
+    Transaction.set_context_of_many(db.get_session(), ids, c)
 
     print('\ndone')
 
@@ -71,6 +63,7 @@ def set_context(c: str, ids: str) -> None:
 def create_category(name: str, sector: str) -> None:
     """Create a category with the name and sector"""
 
+    session = db.get_session()
     session.add(Category(name=name, sector=sector))
     session.commit()
 
@@ -85,7 +78,7 @@ def create_category(name: str, sector: str) -> None:
 def set_category(category_name: str, transaction_id: int) -> None:
     """Set transaction`s category manualy"""
     session = db.get_session()
-    category = session.query(Category).filter_by(name=category_name).one()
+    category = find_category(session, category_name)
 
     tc = TransactionsCategories(category_id=category.id,
                                 transaction_id=transaction_id)
@@ -102,16 +95,12 @@ def set_category(category_name: str, transaction_id: int) -> None:
 def create_category_rule(category_name: str, rule: str) -> None:
     """Create a rule as a regex expression for categorize a transaction"""
     session = db.get_session()
-    category = session.query(Category).filter_by(name=category_name).one()
+    category = find_category(session, category_name)
 
     session.add(CategoryRule(category_id=category.id, rule=rule))
     session.commit()
 
-    print('\nReprocessing categories')
-    conflicts = Transaction.set_categories_by_rules(
-        session, session.query(CategoryRule).all())
-    print_category_conflicts(conflicts)
-    TransactionsCategories.set_categories_by_user(session)
+    reprocess_categories(session)
 
     print('\ndone')
 
@@ -130,6 +119,19 @@ def adjust(reason: str, transactions: str) -> None:
     Adjustment.add(session, reason, ids_param)
 
     print('\ndone')
+
+
+def find_category(session: Session, name: str) -> Category:
+    return session.query(Category).filter_by(name=name).one()
+
+
+def reprocess_categories(session: Session) -> None:
+    print('\nReprocessing categories')
+    conflicts = Transaction.set_categories_by_rules(
+        session, session.query(CategoryRule).all())
+    print_category_conflicts(conflicts)
+
+    TransactionsCategories.set_categories_by_user(session)
 
 
 def print_category_conflicts(conflicts: list[str]) -> None:

@@ -1,6 +1,3 @@
-# Run this app with `python app.py` and
-# visit http://127.0.0.1:8050/ in your web browser.
-
 import dash
 import pandas as pd
 import financial.entities.db as db
@@ -12,9 +9,6 @@ from pandas import DataFrame
 from dash import html, dcc, Output, Input
 from datetime import datetime
 
-
-# external_css = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"  # nopep8
-# app = Dash(__name__, external_stylesheets=[external_css])
 
 empty_result = "No Data"
 

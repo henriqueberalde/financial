@@ -3,9 +3,11 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import declarative_base
 
+from financial.settings import database_url
 
-def get_engine(conn_string: str = "mysql+pymysql://financial:pass_123@localhost/financial") -> Engine:  # nopep8
-    return create_engine(conn_string)
+
+def get_engine(conn_string: str | None = None) -> Engine:
+    return create_engine(conn_string or database_url())
 
 
 def get_session() -> Session:

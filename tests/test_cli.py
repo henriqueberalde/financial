@@ -1,3 +1,8 @@
+import shutil
+
+from datetime import datetime
+from decimal import Decimal
+
 import pytest
 
 from click.testing import CliRunner, Result
@@ -8,6 +13,8 @@ import financial.database as db
 from factories import make_transaction
 
 from financial.cli import cli, main, print_category_conflicts
+from financial.importers.inter_credit_card.model import \
+    InterCreditCardTransaction
 from financial.models.adjustment import Adjustment
 from financial.models.category import Category
 from financial.models.category_rule import CategoryRule
@@ -124,6 +131,49 @@ def test_print_category_conflicts_prints_nothing_without_conflicts(capsys):
     print_category_conflicts([])
 
     assert capsys.readouterr().out == ""
+
+
+def test_inter_credit_card_import_stages_every_invoice(session: Session,
+                                                       tmp_path):
+    for name in ["2024-06.csv", "2024-07.csv"]:
+        shutil.copy(f"tests/data/inter_credit_card/{name}", tmp_path / name)
+    (tmp_path / "fatura-2024-08.csv").touch()
+
+    result = invoke("inter-credit-card-import", "-d", str(tmp_path))
+
+    assert "2024-06.csv: 5 lines staged" in result.output
+    assert "2024-07.csv: 1 lines staged" in result.output
+    assert "fatura-2024-08.csv: not imported." in result.output
+    assert session.query(InterCreditCardTransaction).count() == 6
+
+
+def test_inter_credit_card_import_without_files(tmp_path):
+    result = invoke("inter-credit-card-import", "-d", str(tmp_path))
+
+    assert f"No invoice files found in {tmp_path}" in result.output
+
+
+def test_inter_credit_card_merge_reports_each_month(session: Session):
+    category = Category(name="Mercado")
+    session.add(CategoryRule(category=category, rule="mercado exemplo"))
+    payment = make_transaction(
+        'Pagamento efetuado: "Debito Automatico Fatura Cartao Inter"',
+        Decimal("-1200.00"),
+        date=datetime(2024, 6, 12))
+    session.add(payment)
+    session.commit()
+    invoke("inter-credit-card-import", "-d", "tests/data/inter_credit_card")
+
+    result = invoke("inter-credit-card-merge",
+                    "-user_id", "1", "-user_account", "123")
+
+    assert ("2024-06: 5 transactions merged, R$ 1186.96 deducted from the "
+            "card payment") in result.output
+    assert "2024-07: not merged, kept staged." in result.output
+    assert payment.value == Decimal("-13.04")
+    market = session.query(Transaction).filter(
+        Transaction.description == "MERCADO EXEMPLO SAO PAULO BRA").one()
+    assert market.category_id == category.id
 
 
 def test_main_registers_repl_and_runs_cli(monkeypatch, capsys):

@@ -173,6 +173,32 @@ def test_when_empty_transactions_error(session: Session):
         )
 
 
+def test_gains_and_spends_split_transactions_by_sign(session: Session):
+    spend = __transaction(session, "spend")
+    gain = __transaction(session, "gain")
+
+    adjustment = Adjustment(reason="Test Reason", transactions=[spend, gain])
+    session.add(adjustment)
+
+    assert adjustment.spends() == [spend]
+    assert adjustment.gains() == [gain]
+
+
+def test_add_rolls_back_and_raises_on_error(session: Session, monkeypatch):
+    spend = __transaction(session, "spend")
+    gain = __transaction(session, "gain")
+
+    def failing_commit():
+        raise RuntimeError("database unavailable")
+
+    monkeypatch.setattr(session, "commit", failing_commit)
+
+    with pytest.raises(RuntimeError, match="database unavailable"):
+        Adjustment.add(session, "Test Reason", [spend, gain])
+
+    assert session.query(Adjustment).count() == 0
+
+
 def __transaction(session: Session, type: str):
     value = 0
 

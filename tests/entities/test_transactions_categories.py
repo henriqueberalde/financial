@@ -31,3 +31,17 @@ def test_set_transactions_categories(session):
     print(t_db.__dict__)
 
     assert t_db.category_id == category.id
+
+
+def test_set_categories_by_user_reports_errors_without_raising(monkeypatch,
+                                                               capsys):
+    def failing_set(session):
+        raise RuntimeError("database unavailable")
+
+    monkeypatch.setattr(TransactionsCategories,
+                        "set_transactions_categories",
+                        failing_set)
+
+    TransactionsCategories.set_categories_by_user(None)  # type: ignore
+
+    assert "Error while setting specific categorization. database unavailable" in capsys.readouterr().out  # nopep8

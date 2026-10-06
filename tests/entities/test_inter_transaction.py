@@ -1,8 +1,55 @@
+import hashlib
+
 from sqlalchemy.orm import Session
 from sqlite3 import Timestamp
 from financial.entities.transaction import Transaction
 from financial.entities.inter_transaction import InterTransaction
 from financial.entities.user import User
+
+
+def test_hash_is_generated_from_date_description_value_and_balance():
+    inter_transaction = InterTransaction(date=Timestamp(2022, 1, 1),
+                                         description="Test1",
+                                         value=1.1,
+                                         balance=111.1)
+
+    assert inter_transaction.hash == hashlib.sha256(
+        b"2022-01-01 00:00:00Test11.1111.1").hexdigest()
+
+
+def test_hash_is_kept_when_given():
+    inter_transaction = InterTransaction(date=Timestamp(2022, 1, 1),
+                                         description="Test1",
+                                         value=1.1,
+                                         balance=111.1,
+                                         hash="given")
+
+    assert inter_transaction.hash == "given"
+
+
+def test_cleanup_inter_transactions_removes_all_rows(session: Session):
+    session.add(InterTransaction(date=Timestamp(2022, 1, 1),
+                                 description="Test1",
+                                 value=1.1,
+                                 balance=111.1))
+    session.commit()
+
+    InterTransaction.cleanup_inter_transactions(session)
+
+    assert session.query(InterTransaction).count() == 0
+
+
+def test_merge_to_transactions_rolls_back_on_error(session: Session, capsys):
+    session.add(InterTransaction(date=Timestamp(2022, 1, 1),
+                                 description="Test1",
+                                 value=1.1,
+                                 balance=111.1))
+    session.commit()
+
+    InterTransaction.merge_to_transactions(session, None)  # type: ignore
+
+    assert "Error while merging transactions from inter." in capsys.readouterr().out  # nopep8
+    assert session.query(Transaction).count() == 0
 
 
 def test_merge_to_transactions_add_columns(session: Session):

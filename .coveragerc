@@ -7,3 +7,6 @@ omit =
 
 [report]
 show_missing = true
+fail_under = 95
+exclude_also =
+    if __name__ == .__main__.:

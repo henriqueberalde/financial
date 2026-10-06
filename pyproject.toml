@@ -39,7 +39,8 @@ include = ["financial*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov --cov-report=term-missing"
+pythonpath = ["tests"]
+addopts = "--cov --cov-report=term-missing --import-mode=importlib"
 
 [tool.coverage.run]
 source = ["financial"]

@@ -162,3 +162,7 @@ cython_debug/
 # Personal data (statements, dumps): only the folder is versioned
 data/*
 !data/.gitkeep
+
+# Invoices waiting to be imported: only the folders are versioned
+financial/importers/*/data/*
+!financial/importers/*/data/.gitkeep

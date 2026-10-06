@@ -22,14 +22,15 @@ financial/
 ├── services/     # business operations that use a session (categorization, adjustments, ...)
 └── importers/
     ├── base.py
-    └── <bank>/   # everything specific to one bank: importer, statement parsing, staging model, constants
+    ├── staging.py # inserts staged rows into transactions (shared by every importer)
+    └── <source>/ # everything specific to one bank or card: importer, parsing, staging model, merge, constants, data/
 tests/            # mirrors financial/; CSV fixtures in tests/data/
 notebooks/        # exploratory analyses
 data/             # personal statements and dumps, never versioned
 ```
 
 - Business logic goes into `services/` (or the bank package), never into models or the CLI
-- A new bank is a new package under `financial/importers/`
+- A new bank or card is a new package under `financial/importers/`, reusing `financial/importers/staging.py` to merge
 - New models must be imported in `financial/models/__init__.py` so their tables are registered
 
 ## Code Conventions

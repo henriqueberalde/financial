@@ -1,11 +1,16 @@
 import click
 import financial.database as db
 
+from pathlib import Path
+
 from sqlalchemy.orm import Session
 from click_repl import register_repl
 from financial.importers.inter.importer import TransactionsImporter
 from financial.models.user import User
 from financial.importers.inter import staging
+from financial.importers.inter_credit_card import staging as card_staging
+from financial.importers.inter_credit_card.constants import DATA_DIR
+from financial.importers.inter_credit_card.importer import CreditCardImporter
 from financial.models.category import Category
 from financial.models.category_rule import CategoryRule
 from financial.services import adjustments, categorization, transactions
@@ -38,6 +43,47 @@ def merge_inter_transactions(user_id: int, user_account: str) -> None:
 
     print('\nMerging inter transactions into transactions')
     staging.merge_into_transactions(session, User(user_id, user_account))
+
+    reprocess_categories(session)
+
+    print('\ndone')
+
+
+@cli.command()
+@click.option("-d", "directory", default=DATA_DIR, show_default=True,
+              type=click.Path(exists=True, file_okay=False, path_type=Path),
+              help="Folder with the invoices, one YYYY-MM.csv per month")
+def inter_credit_card_import(directory: Path) -> None:
+    """Stage Inter credit card invoices to be merged later."""
+
+    importer = CreditCardImporter(db.get_session())
+    files = importer.invoice_files(directory)
+
+    if len(files) == 0:
+        print(f'\nNo invoice files found in {directory}')
+
+    for path in files:
+        try:
+            print(f'{path.name}: {importer.import_file(path)} lines staged')
+        except ValueError as e:
+            print(f'{path.name}: not imported. {e}')
+
+    print('\ndone')
+
+
+@cli.command()
+@click.option("-user_id", prompt="User id", help="User id")
+@click.option("-user_account", prompt="User account", help="User Account")
+def inter_credit_card_merge(user_id: int, user_account: str) -> None:
+    """Merge staged credit card invoices, deducting them from the card
+    payments"""
+
+    session = db.get_session()
+
+    print('\nMerging credit card invoices into transactions')
+    for result in card_staging.merge_into_transactions(
+            session, User(user_id, user_account)):
+        print_month_merge(result)
 
     reprocess_categories(session)
 
@@ -122,6 +168,16 @@ def adjust(reason: str, transactions: str) -> None:
 def reprocess_categories(session: Session) -> None:
     print('\nReprocessing categories')
     print_category_conflicts(categorization.reprocess_categories(session))
+
+
+def print_month_merge(result: card_staging.MonthMerge) -> None:
+    if result.error is not None:
+        print(f'  {result.invoice_month}: not merged, kept staged. '
+              f'{result.error}')
+        return
+
+    print(f'  {result.invoice_month}: {result.merged} transactions merged, '
+          f'R$ {result.deducted:.2f} deducted from the card payment')
 
 
 def print_category_conflicts(conflicts: list[str]) -> None:

@@ -69,6 +69,22 @@ financial inter-import-statement -f data/statement.csv
 financial merge-inter-transactions -user_id 1 -user_account <account>
 ```
 
+### Inter credit card invoices
+Export each invoice from the Inter app as CSV and save it as `YYYY-MM.csv` (the month the invoice is paid) in `financial/importers/inter_credit_card/data/`. Then:
+
+```bash
+financial inter-credit-card-import    # stages the invoices (-d <folder> to read another folder)
+financial inter-credit-card-merge -user_id 1 -user_account <account>
+```
+
+The merge runs one invoice month at a time:
+- the invoice purchases and refunds become transactions (payment lines of the invoice are skipped, they are already in the statement);
+- their total is deducted from the `value` of the checking account transaction that paid the card in that month (or what is left of an advance payment made in the previous month); `original_value` is kept;
+- installments are dated in the month they are charged and get ` - Parcela N/M` in the description;
+- a month whose payment is not found is not merged and stays staged, so it can be merged again after the statement with the payment is imported.
+
+Card purchases have no `balance`, since they do not change the checking account balance.
+
 ### Jupyter Notebook
 Exploratory analyses live in `notebooks/`. With the virtual environment activated:
 
@@ -88,7 +104,9 @@ nbstripout --install
 | `financial/cli.py` | `financial` command (CLI and REPL) |
 | `financial/models/` | SQLAlchemy tables |
 | `financial/services/` | Business operations: categorization, adjustments, transaction contexts |
+| `financial/importers/staging.py` | Insert of staged rows into transactions, shared by the importers |
 | `financial/importers/inter/` | Banco Inter statement import: parsing, staging table, merge and constants |
+| `financial/importers/inter_credit_card/` | Banco Inter credit card invoices: parsing, staging table, month-by-month merge; invoices go in its `data/` folder (not versioned) |
 | `financial/settings.py`, `financial/database.py` | `.env` settings and database session |
 | `alembic/` | Database migrations |
 | `notebooks/` | Exploratory analyses |

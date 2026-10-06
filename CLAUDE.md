@@ -18,6 +18,8 @@ Interfaces: the CLI (`financial/cli.py`, with a REPL) and the Jupyter notebooks 
 - Follow REST API and MVP conventions
 - Build minimal line numbers classes / functions and files
 - Always extract configuration values in .env / .env_example
+  - Secrets and per-environment values: `.env`, read through `financial/settings.py`
+  - Library settings and business decisions: `financial/constants.py`
 - Small commits, one per feature or feature stage
 
 ## Documentation

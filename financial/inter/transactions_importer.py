@@ -1,23 +1,20 @@
 import pandas as pd
 
 from sqlalchemy.orm import Session
+from financial import constants
 from financial.base_transactions_importer import BaseTransactionsImporter
 from pandas import DataFrame as PandasDataFrame
 from financial.inter.data_frame import DataFrame as InterDataFrame
 from financial.entities.category_rule import CategoryRule
-from financial.entities.user import User
-from financial.entities.transaction import Transaction
 from financial.entities.inter_transaction import InterTransaction
-from financial.entities.transactions_categories import TransactionsCategories
 
 
 class TransactionsImporter(BaseTransactionsImporter):
     def __init__(self, session: Session) -> None:
-        super().__init__("077")
+        super().__init__(constants.INTER_BANK_CODE)
 
         self.session = session
         self.data_frame: InterDataFrame
-        # self.user: User = user
         self.file_path: str
         self.category_rules: list[CategoryRule] = []
 
@@ -38,7 +35,7 @@ class TransactionsImporter(BaseTransactionsImporter):
             self.data_frame = InterDataFrame(pandas_data_frame,
                                              self.category_rules)
 
-            print(f'\nNormalizing Data')
+            print('\nNormalizing Data')
             self.data_frame.normalize_date()
             self.data_frame.add_hash_column()
 
@@ -54,11 +51,11 @@ class TransactionsImporter(BaseTransactionsImporter):
     def __load_csv(self) -> PandasDataFrame | None:
         df = pd.read_csv(
             filepath_or_buffer=self.file_path,
-            sep=";",
-            header=4,
-            names=["date", "description", "value", "balance"],
-            decimal=",",
-            thousands=".")
+            sep=constants.INTER_CSV_SEPARATOR,
+            header=constants.INTER_CSV_HEADER_ROW,
+            names=constants.INTER_CSV_COLUMNS,
+            decimal=constants.INTER_CSV_DECIMAL,
+            thousands=constants.INTER_CSV_THOUSANDS)
 
         return df
 

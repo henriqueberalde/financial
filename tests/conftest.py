@@ -9,6 +9,7 @@ import financial.database as db
 
 # Importing the packages registers every table in db.Base.metadata
 import financial.importers.inter  # noqa: F401
+import financial.importers.inter_credit_card  # noqa: F401
 import financial.models  # noqa: F401
 
 

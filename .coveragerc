@@ -1,9 +1,6 @@
 [run]
 source = financial
 branch = true
-omit =
-    # The dashboard is going to be replaced, so it is not unit tested
-    financial/dash_board/*
 
 [report]
 show_missing = true

@@ -73,7 +73,6 @@ pycodestyle financial tests      # lint
 ```
 
 A cobertura (linhas e ramos) é medida com `pytest-cov` e o `pytest` falha se ficar abaixo de 95% (`.coveragerc`).
-O dashboard (`financial/dash_board`) fica fora da cobertura porque será substituído.
 Para criar transações de exemplo nos testes, use `make_transaction` de `tests/factories.py`.
 
 # TODO

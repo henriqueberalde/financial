@@ -34,4 +34,4 @@ When adding or changing features:
 - Tests use a fresh in-memory SQLite database per test (`tests/conftest.py`); never point tests to a real database
 - Keep SQL portable (ORM or standard SQL) so it runs on both MySQL and SQLite
 - Build test transactions with `tests/factories.py`
-- No integration or e2e tests for now: the frontend is going to change
+- No integration or e2e tests for now: the dashboard is going to be rebuilt

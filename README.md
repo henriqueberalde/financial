@@ -63,10 +63,10 @@ python financial/cli.py --help   # lists the commands
 python financial/cli.py repl     # interactive mode
 ```
 
-Basic flow to import a Banco Inter statement (`;`-separated CSV, saved in `assets/`):
+Basic flow to import a Banco Inter statement (`;`-separated CSV, saved in `data/`):
 
 ```bash
-python financial/cli.py inter-import-statement -f assets/statement.csv
+python financial/cli.py inter-import-statement -f data/statement.csv
 python financial/cli.py merge-inter-transactions -user_id 1 -user_account <account>
 ```
 

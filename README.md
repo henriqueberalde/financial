@@ -73,9 +73,14 @@ nbstripout --install
 Os testes usam um banco SQLite em memória, criado do zero a cada teste a partir dos models. Não é preciso MySQL:
 
 ```bash
-pytest
+pytest                           # testes + relatório de cobertura
+pytest --cov-report=html         # relatório navegável em htmlcov/index.html
 pycodestyle financial tests      # lint
 ```
+
+A cobertura (linhas e ramos) é medida com `pytest-cov` e o `pytest` falha se ficar abaixo de 95% (`.coveragerc`).
+O dashboard (`financial/dash_board`) fica fora da cobertura porque será substituído.
+Para criar transações de exemplo nos testes, use `make_transaction` de `tests/factories.py`.
 
 # TODO
 * [ ] Use https://www.mage.ai/

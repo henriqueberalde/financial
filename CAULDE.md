@@ -25,3 +25,11 @@ When adding or changing features:
 1. Add or update tests (unit, integration or e2e) when applicable
 2. Update `README.md` if applicable
 3. Update `CLAUDE.md` if the change affects development workflow, version of core tecnologies, runnig or testing scripts, core principles or architecture.
+
+## Testing
+
+- `pytest` runs the unit tests with coverage; it fails below 95% (`.coveragerc`)
+- Tests use a fresh in-memory SQLite database per test (`tests/conftest.py`); never point tests to a real database
+- Keep SQL portable (ORM or standard SQL) so it runs on both MySQL and SQLite
+- Build test transactions with `tests/factories.py`
+- No integration or e2e tests for now: the frontend is going to change

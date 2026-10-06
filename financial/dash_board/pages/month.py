@@ -3,6 +3,7 @@ import pandas as pd
 import financial.entities.db as db
 
 from dash import callback
+from financial.dash_board.components import table_content
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from pandas import DataFrame
@@ -125,19 +126,6 @@ def all_transactions_by_period(session: Session,
         where date between :start_date and :end_date
         order by date desc;
     """), {"start_date": start_date, "end_date": end_date}).fetchall()
-
-
-def table_content(df: DataFrame):
-    return [
-        html.Thead(
-            html.Tr([html.Th(col) for col in df.columns])
-        ),
-        html.Tbody([
-            html.Tr([
-                html.Td(df.iloc[i][col]) for col in df.columns
-            ]) for i in range(min(len(df), 1000))
-        ])
-    ]
 
 
 def grouped_spends_df(start_date: datetime, end_date: datetime):

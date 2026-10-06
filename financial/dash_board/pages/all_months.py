@@ -3,6 +3,7 @@ import calendar
 import pandas as pd
 import financial.entities.db as db
 
+from financial.dash_board.components import table_content
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from pandas import DataFrame
@@ -10,19 +11,6 @@ from datetime import datetime
 from dash import html
 
 dash.register_page(__name__)
-
-
-def table_content(df: DataFrame):
-    return [
-        html.Thead(
-            html.Tr([html.Th(col) for col in df.columns])
-        ),
-        html.Tbody([
-            html.Tr([
-                html.Td(df.iloc[i][col]) for col in df.columns
-            ]) for i in range(min(len(df), 1000))
-        ])
-    ]
 
 
 def every_month() -> DataFrame:

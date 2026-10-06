@@ -19,7 +19,7 @@ Interfaces: the CLI (`financial` command from `financial/cli.py`, with a REPL) a
 - Build minimal line numbers classes / functions and files
 - Always extract configuration values in .env / .env_example
   - Secrets and per-environment values: `.env`, read through `financial/settings.py`
-  - Library settings and business decisions: `financial/constants.py`
+  - Library settings and business decisions: `constants.py` of the package they belong to (e.g. `financial/importers/inter/constants.py`)
 - Small commits, one per feature or feature stage
 
 ## Documentation

@@ -2,14 +2,14 @@ import hashlib
 
 from pytest import approx
 from decimal import Decimal
-from pandas import DataFrame as PandasDataFrame
+from pandas import DataFrame
 from datetime import datetime
 from sqlalchemy.orm import Session
-from financial.inter.transactions_importer import TransactionsImporter
+from financial.importers.inter.importer import TransactionsImporter
 from financial.models.user import User
 from financial.models.category import Category
 from financial.models.category_rule import CategoryRule
-from financial.models.inter_transaction import InterTransaction
+from financial.importers.inter.model import InterTransaction
 
 user = User(id=1, account="123")
 
@@ -67,7 +67,7 @@ def test_inter_importer_reports_save_errors(session: Session,
     def failing_to_sql(*args, **kwargs):
         raise RuntimeError("data too long")
 
-    monkeypatch.setattr(PandasDataFrame, "to_sql", failing_to_sql)
+    monkeypatch.setattr(DataFrame, "to_sql", failing_to_sql)
 
     importer = TransactionsImporter(session)
     importer.import_from_csv("tests/data/inter_statement.csv")

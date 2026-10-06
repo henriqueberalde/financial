@@ -38,7 +38,7 @@ cp .env_example .env             # then set the database password in .env
 | `DATABASE_URL` | SQLAlchemy URL of the application database (CLI, notebooks and Alembic) |
 
 Variables set in the environment take precedence over `.env`.
-Library settings and business rules (Inter CSV layout, bank code, etc.) live in `financial/constants.py`.
+Library settings and business rules live in the `constants.py` of the package they belong to (e.g. the Inter CSV layout and bank code in `financial/importers/inter/constants.py`).
 
 ### 4. Migrations
 Alembic uses `DATABASE_URL` from `.env`:

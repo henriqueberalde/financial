@@ -2,7 +2,7 @@ import financial.database as db
 
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, text
-from financial.constants import INTER_BANK_CODE
+from financial.importers.inter.constants import BANK_CODE
 from financial.models.user import User
 from financial.hashing import transaction_hash
 
@@ -57,7 +57,7 @@ class InterTransaction(db.Base):
                             where t.id is null;"""), {
                                 "user_id": user.id,
                                 "user_account": user.account,
-                                "bank": INTER_BANK_CODE,
+                                "bank": BANK_CODE,
                             })
             session.commit()
 

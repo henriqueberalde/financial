@@ -3,10 +3,10 @@ import financial.database as db
 
 from sqlalchemy.orm import Session
 from click_repl import register_repl
-from financial.inter.transactions_importer import TransactionsImporter
+from financial.importers.inter.importer import TransactionsImporter
 from financial.models.user import User
 from financial.models.transaction import Transaction
-from financial.models.inter_transaction import InterTransaction
+from financial.importers.inter.model import InterTransaction
 from financial.models.category import Category
 from financial.models.category_rule import CategoryRule
 from financial.models.transaction_category import TransactionCategory

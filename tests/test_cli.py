@@ -11,7 +11,7 @@ from financial.cli import cli, main, print_category_conflicts
 from financial.models.adjustment import Adjustment
 from financial.models.category import Category
 from financial.models.category_rule import CategoryRule
-from financial.models.inter_transaction import InterTransaction
+from financial.importers.inter.model import InterTransaction
 from financial.models.transaction import Transaction
 from financial.models.transaction_category import TransactionCategory
 

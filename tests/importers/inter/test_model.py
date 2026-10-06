@@ -3,7 +3,7 @@ import hashlib
 from sqlalchemy.orm import Session
 from datetime import datetime
 from financial.models.transaction import Transaction
-from financial.models.inter_transaction import InterTransaction
+from financial.importers.inter.model import InterTransaction
 from financial.models.user import User
 
 

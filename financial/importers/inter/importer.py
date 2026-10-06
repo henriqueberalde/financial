@@ -1,20 +1,18 @@
-import pandas as pd
-
 from sqlalchemy.orm import Session
-from financial import constants
-from financial.base_transactions_importer import BaseTransactionsImporter
-from pandas import DataFrame as PandasDataFrame
-from financial.inter.data_frame import DataFrame as InterDataFrame
+from financial.importers.base import BaseTransactionsImporter
+from financial.importers.inter import constants
+from pandas import DataFrame, read_csv
+from financial.importers.inter.statement import Statement
 from financial.models.category_rule import CategoryRule
-from financial.models.inter_transaction import InterTransaction
+from financial.importers.inter.model import InterTransaction
 
 
 class TransactionsImporter(BaseTransactionsImporter):
     def __init__(self, session: Session) -> None:
-        super().__init__(constants.INTER_BANK_CODE)
+        super().__init__(constants.BANK_CODE)
 
         self.session = session
-        self.data_frame: InterDataFrame
+        self.statement: Statement
         self.file_path: str
         self.category_rules: list[CategoryRule] = []
 
@@ -32,14 +30,13 @@ class TransactionsImporter(BaseTransactionsImporter):
             print(f'{len(pandas_data_frame.index)} transactions found on csv file')  # nopep8
 
             self.__fetch_category_rules()
-            self.data_frame = InterDataFrame(pandas_data_frame,
-                                             self.category_rules)
+            self.statement = Statement(pandas_data_frame, self.category_rules)
 
             print('\nNormalizing Data')
-            self.data_frame.normalize_date()
-            self.data_frame.add_hash_column()
+            self.statement.normalize_date()
+            self.statement.add_hash_column()
 
-            print(self.data_frame.data_frame)
+            print(self.statement.data_frame)
 
             print('\nSaving...')
             self.__save_df()
@@ -48,14 +45,14 @@ class TransactionsImporter(BaseTransactionsImporter):
             print(f'\nError. \n\n{e}')
             return None
 
-    def __load_csv(self) -> PandasDataFrame | None:
-        df = pd.read_csv(
+    def __load_csv(self) -> DataFrame:
+        df = read_csv(
             filepath_or_buffer=self.file_path,
-            sep=constants.INTER_CSV_SEPARATOR,
-            header=constants.INTER_CSV_HEADER_ROW,
-            names=constants.INTER_CSV_COLUMNS,
-            decimal=constants.INTER_CSV_DECIMAL,
-            thousands=constants.INTER_CSV_THOUSANDS)
+            sep=constants.CSV_SEPARATOR,
+            header=constants.CSV_HEADER_ROW,
+            names=constants.CSV_COLUMNS,
+            decimal=constants.CSV_DECIMAL,
+            thousands=constants.CSV_THOUSANDS)
 
         return df
 
@@ -64,10 +61,10 @@ class TransactionsImporter(BaseTransactionsImporter):
         mysql_connection = engine.connect()
 
         try:
-            self.data_frame.data_frame.to_sql(name='inter_transactions',
-                                              con=mysql_connection,
-                                              if_exists='append',
-                                              index=False)
+            self.statement.data_frame.to_sql(name='inter_transactions',
+                                             con=mysql_connection,
+                                             if_exists='append',
+                                             index=False)
         except Exception as e:
             print(f'Error while saving data to db. {e}')
         finally:

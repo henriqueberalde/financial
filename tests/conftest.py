@@ -7,7 +7,9 @@ from sqlalchemy.pool import StaticPool
 
 import financial.database as db
 
-import financial.models  # noqa: F401  (registers every table)
+# Importing the packages registers every table in db.Base.metadata
+import financial.importers.inter  # noqa: F401
+import financial.models  # noqa: F401
 
 
 @pytest.fixture()

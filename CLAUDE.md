@@ -2,7 +2,7 @@
 
 An application to organize my financial life.
 
-Interfaces: the CLI (`financial/cli.py`, with a REPL) and the Jupyter notebooks in `notebooks/`. There is no web dashboard for now; it will be rebuilt in a different way.
+Interfaces: the CLI (`financial/cli.py`, with a REPL) and the Jupyter notebooks in `notebooks/`.
 
 ## Key Architecture Decisions
 

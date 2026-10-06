@@ -2,7 +2,7 @@
 
 An application to organize my financial life.
 
-Interfaces: the CLI (`financial/cli.py`, with a REPL) and the Jupyter notebooks in `notebooks/`.
+Interfaces: the CLI (`financial` command from `financial/cli.py`, with a REPL) and the Jupyter notebooks in `notebooks/`.
 
 ## Key Architecture Decisions
 

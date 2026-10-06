@@ -143,6 +143,10 @@ def print_category_conflicts(conflicts: list[str]) -> None:
         print(f'  {conflict}')
 
 
-if __name__ == "__main__":
+def main() -> None:
     register_repl(cli)
     cli()
+
+
+if __name__ == "__main__":
+    main()

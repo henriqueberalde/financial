@@ -31,6 +31,9 @@ dev = [
     "plotly==7.1.0",
 ]
 
+[project.scripts]
+financial = "financial.cli:main"
+
 [tool.setuptools.packages.find]
 include = ["financial*"]
 

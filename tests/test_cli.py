@@ -7,7 +7,7 @@ import financial.entities.db as db
 
 from factories import make_transaction
 
-from financial.cli import cli, print_category_conflicts
+from financial.cli import cli, main, print_category_conflicts
 from financial.entities.adjustment import Adjustment
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
@@ -124,6 +124,16 @@ def test_print_category_conflicts_prints_nothing_without_conflicts(capsys):
     print_category_conflicts([])
 
     assert capsys.readouterr().out == ""
+
+
+def test_main_registers_repl_and_runs_cli(monkeypatch, capsys):
+    monkeypatch.setattr("sys.argv", ["financial", "--help"])
+
+    with pytest.raises(SystemExit) as exit_info:
+        main()
+
+    assert exit_info.value.code == 0
+    assert "repl" in capsys.readouterr().out
 
 
 def __add_transactions(session: Session,

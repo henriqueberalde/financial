@@ -58,15 +58,15 @@ With the virtual environment activated:
 
 ### CLI
 ```bash
-python financial/cli.py --help   # lists the commands
-python financial/cli.py repl     # interactive mode
+financial --help                 # lists the commands
+financial repl                   # interactive mode
 ```
 
 Basic flow to import a Banco Inter statement (`;`-separated CSV, saved in `data/`):
 
 ```bash
-python financial/cli.py inter-import-statement -f data/statement.csv
-python financial/cli.py merge-inter-transactions -user_id 1 -user_account <account>
+financial inter-import-statement -f data/statement.csv
+financial merge-inter-transactions -user_id 1 -user_account <account>
 ```
 
 ### Jupyter Notebook

@@ -4,6 +4,7 @@ import financial.entities.db as db
 import plotly.graph_objs as go
 
 from sqlalchemy import text
+from financial import constants
 from sqlalchemy.orm import Session
 from pandas import DataFrame
 from dash import dcc
@@ -24,10 +25,13 @@ def get_data(session: Session):
             DATE_FORMAT(date, '%m-%Y') as date_ref,
             SUM(value)*-1 as sum
         from transactions
-        where description LIKE '%CDB POS DI LIQ. BANCO INTER SA%'
-        and date > '2021-08-31'
+        where description LIKE :description_pattern
+        and date > :start_date
         group by date_ref;
-    """)).fetchall()
+    """), {
+        "description_pattern": constants.INVESTMENT_DESCRIPTION_PATTERN,
+        "start_date": constants.INVESTMENT_START_DATE,
+    }).fetchall()
 
 
 df = data_frame()

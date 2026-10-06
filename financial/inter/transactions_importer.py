@@ -1,6 +1,7 @@
 import pandas as pd
 
 from sqlalchemy.orm import Session
+from financial import constants
 from financial.base_transactions_importer import BaseTransactionsImporter
 from pandas import DataFrame as PandasDataFrame
 from financial.inter.data_frame import DataFrame as InterDataFrame
@@ -11,7 +12,7 @@ from financial.entities.inter_transaction import InterTransaction
 
 class TransactionsImporter(BaseTransactionsImporter):
     def __init__(self, session: Session) -> None:
-        super().__init__("077")
+        super().__init__(constants.INTER_BANK_CODE)
 
         self.session = session
         self.data_frame: InterDataFrame
@@ -60,11 +61,11 @@ class TransactionsImporter(BaseTransactionsImporter):
     def __load_csv(self) -> PandasDataFrame | None:
         df = pd.read_csv(
             filepath_or_buffer=self.file_path,
-            sep=";",
-            header=4,
-            names=["date", "description", "value", "balance"],
-            decimal=",",
-            thousands=".")
+            sep=constants.INTER_CSV_SEPARATOR,
+            header=constants.INTER_CSV_HEADER_ROW,
+            names=constants.INTER_CSV_COLUMNS,
+            decimal=constants.INTER_CSV_DECIMAL,
+            thousands=constants.INTER_CSV_THOUSANDS)
 
         return df
 

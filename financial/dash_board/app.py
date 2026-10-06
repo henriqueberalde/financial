@@ -1,11 +1,11 @@
 from dash import Dash, html, dcc
 import dash
 
-external_css = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"  # nopep8
+from financial.constants import DASHBOARD_STYLESHEET_URL
 
 app = Dash(
     __name__,
-    external_stylesheets=[external_css],
+    external_stylesheets=[DASHBOARD_STYLESHEET_URL],
     use_pages=True
 )
 

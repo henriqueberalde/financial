@@ -1,12 +1,9 @@
-import re
 import financial.database as db
 
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Iterable, Any
-from financial.models.category_rule import CategoryRule
-from financial.models.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
 from financial.hashing import transaction_hash
 
 
@@ -60,54 +57,6 @@ class Transaction(db.Base):
         except Exception as e:
             print(f"Error while saving data to db.{e}")
             session.rollback()
-
-    @staticmethod
-    def set_categories_by_rules(session: Session,
-                                category_rules: list[CategoryRule]) -> list[str]:  # nopep8
-        """Set categories by rules, skipping transactions matched by rules
-        of more than one category. Returns the conflict messages."""
-        errors: list[str] = []
-
-        transactions = session.query(Transaction).all()
-
-        for transaction in transactions:
-            try:
-                category_id = Transaction.__fetch_category_id(
-                    transaction.description,
-                    category_rules)
-
-                if category_id is not None:
-                    session.add(transaction)
-                    transaction.category_id = category_id
-            except CategoryRuleConflictError as e:
-                errors.append(e.message)
-
-        session.commit()
-
-        return errors
-
-    @staticmethod
-    def __fetch_category_id(description: str,
-                            category_rules: list[CategoryRule]) -> str | None:
-        matched_rules: list[CategoryRule] = []
-
-        for rule in category_rules:
-            if re.search(str(rule.rule),
-                         description,
-                         re.IGNORECASE) is not None:
-                matched_rules.append(rule)
-
-        distinct_matched_categories = CategoryRule.distinct_categories(
-            matched_rules
-        )
-
-        if len(distinct_matched_categories) == 0:
-            return None
-
-        if len(distinct_matched_categories) == 1:
-            return str(matched_rules[0].category.id)
-
-        raise CategoryRuleConflictError(description, matched_rules)
 
     def __generate_hash(self) -> None:
         self.original_hash = transaction_hash(

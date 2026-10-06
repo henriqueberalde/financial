@@ -9,6 +9,7 @@ from financial.models.transaction import Transaction
 from financial.importers.inter.model import InterTransaction
 from financial.models.category import Category
 from financial.models.category_rule import CategoryRule
+from financial.services import categorization
 from financial.models.transaction_category import TransactionCategory
 from financial.models.adjustment import Adjustment
 
@@ -78,13 +79,13 @@ def create_category(name: str, sector: str) -> None:
 def set_category(category_name: str, transaction_id: int) -> None:
     """Set transaction`s category manualy"""
     session = db.get_session()
-    category = find_category(session, category_name)
+    category = categorization.find_category(session, category_name)
 
     tc = TransactionCategory(category_id=category.id,
                              transaction_id=transaction_id)
     session.add(tc)
     session.commit()
-    TransactionCategory.set_categories_by_user(session)
+    categorization.set_categories_by_user(session)
 
     print('\ndone')
 
@@ -95,7 +96,7 @@ def set_category(category_name: str, transaction_id: int) -> None:
 def create_category_rule(category_name: str, rule: str) -> None:
     """Create a rule as a regex expression for categorize a transaction"""
     session = db.get_session()
-    category = find_category(session, category_name)
+    category = categorization.find_category(session, category_name)
 
     session.add(CategoryRule(category_id=category.id, rule=rule))
     session.commit()
@@ -121,17 +122,9 @@ def adjust(reason: str, transactions: str) -> None:
     print('\ndone')
 
 
-def find_category(session: Session, name: str) -> Category:
-    return session.query(Category).filter_by(name=name).one()
-
-
 def reprocess_categories(session: Session) -> None:
     print('\nReprocessing categories')
-    conflicts = Transaction.set_categories_by_rules(
-        session, session.query(CategoryRule).all())
-    print_category_conflicts(conflicts)
-
-    TransactionCategory.set_categories_by_user(session)
+    print_category_conflicts(categorization.reprocess_categories(session))
 
 
 def print_category_conflicts(conflicts: list[str]) -> None:

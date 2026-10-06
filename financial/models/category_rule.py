@@ -12,13 +12,3 @@ class CategoryRule(db.Base):
     category_id = Column(String, ForeignKey("categories.id"))
 
     category = relationship("Category")
-
-    @staticmethod
-    def distinct_categories(rules: list["CategoryRule"]):  # type: ignore
-        distinct_categories: list[str] = []
-
-        for rule in rules:
-            if rule.category.name not in distinct_categories:
-                distinct_categories.append(rule.category.name)
-
-        return distinct_categories

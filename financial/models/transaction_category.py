@@ -1,7 +1,7 @@
 import financial.database as db
 
 from sqlalchemy import Column, Integer, ForeignKey
-from sqlalchemy.orm import relationship, Session
+from sqlalchemy.orm import relationship
 
 
 class TransactionCategory(db.Base):
@@ -17,20 +17,3 @@ class TransactionCategory(db.Base):
 
     category = relationship("Category")
     transaction = relationship("Transaction")
-
-    @staticmethod
-    def set_transactions_categories(session: Session):
-        transactions_categories = session.query(TransactionCategory).all()
-
-        for tc in transactions_categories:
-            tc.transaction.category_id = tc.category_id
-            session.add(tc)
-
-        session.commit()
-
-    @staticmethod
-    def set_categories_by_user(session: Session) -> None:
-        try:
-            TransactionCategory.set_transactions_categories(session)
-        except Exception as e:
-            print(f"Error while setting specific categorization. {e}")

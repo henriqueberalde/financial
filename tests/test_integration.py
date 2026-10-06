@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from financial.importers.inter.importer import TransactionsImporter
 from financial.importers.inter.model import InterTransaction
 from financial.models.user import User
-from financial.models.adjustment import Adjustment
+from financial.services import adjustments
 from financial.models.transaction import Transaction
 
 
@@ -17,7 +17,8 @@ def test_keep_original_transaction_after_merge(session: Session):
     # Change them (setting adjustment)
     transactions = session.query(Transaction).all()
 
-    Adjustment.add(session, "Test", [transactions[0].id, transactions[1].id])
+    adjustments.add_adjustment(session, "Test",
+                               [transactions[0].id, transactions[1].id])
 
     # Merge the same Transactions again
     InterTransaction.merge_to_transactions(session, User(1, "234543"))

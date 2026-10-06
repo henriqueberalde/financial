@@ -9,9 +9,8 @@ from financial.models.transaction import Transaction
 from financial.importers.inter.model import InterTransaction
 from financial.models.category import Category
 from financial.models.category_rule import CategoryRule
-from financial.services import categorization
+from financial.services import adjustments, categorization
 from financial.models.transaction_category import TransactionCategory
-from financial.models.adjustment import Adjustment
 
 
 @click.group()
@@ -117,7 +116,7 @@ def adjust(reason: str, transactions: str) -> None:
     for id in transactions.split(" "):
         ids_param.append(int(id))  # type: ignore
 
-    Adjustment.add(session, reason, ids_param)
+    adjustments.add_adjustment(session, reason, ids_param)
 
     print('\ndone')
 

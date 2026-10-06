@@ -2,6 +2,8 @@
 
 An application to organize my financial life.
 
+Interfaces: the CLI (`financial/cli.py`, with a REPL) and the Jupyter notebooks in `notebooks/`.
+
 ## Key Architecture Decisions
 
 - **Only english** Namespaces, classes, functions, variables, config keys and every code aspect must be written in english. Only label strings can be written in another language

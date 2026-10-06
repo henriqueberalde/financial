@@ -41,9 +41,7 @@ cp .env_example .env             # depois edite o .env com a senha do banco
 
 | Variável | Uso |
 |---|---|
-| `DATABASE_URL` | URL do SQLAlchemy do banco da aplicação (app, CLI, dashboard, notebooks e Alembic) |
-| `DASHBOARD_HOST`, `DASHBOARD_PORT` | Endereço do dashboard (padrão `127.0.0.1:8050`) |
-| `DASHBOARD_DEBUG` | `true` ativa o modo debug do Dash (padrão `false`) |
+| `DATABASE_URL` | URL do SQLAlchemy do banco da aplicação (CLI, notebooks e Alembic) |
 
 Variáveis definidas no ambiente têm prioridade sobre o `.env`.
 Constantes de bibliotecas e regras de negócio (formato do CSV do Inter, código do banco etc.) ficam em `financial/constants.py`.

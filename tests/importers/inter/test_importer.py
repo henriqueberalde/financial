@@ -77,15 +77,12 @@ def test_inter_importer_reports_save_errors(session: Session,
 
 
 def test_inter_importer_replaces_previous_import(session: Session):
-    session.add(CategoryRule(category=Category(name="Vivo"), rule="vivo"))
-    session.commit()
     importer = TransactionsImporter(session)
 
     importer.import_from_csv("tests/data/inter_statement.csv")
     importer.import_from_csv("tests/data/inter_statement.csv")
 
     assert session.query(InterTransaction).count() == 2
-    assert len(importer.category_rules) == 1
 
 
 def __sha256(value: str) -> str:

@@ -3,7 +3,6 @@ from financial.importers.base import BaseTransactionsImporter
 from financial.importers.inter import constants
 from pandas import DataFrame, read_csv
 from financial.importers.inter.statement import Statement
-from financial.models.category_rule import CategoryRule
 from financial.importers.inter.model import InterTransaction
 
 
@@ -14,7 +13,6 @@ class TransactionsImporter(BaseTransactionsImporter):
         self.session = session
         self.statement: Statement
         self.file_path: str
-        self.category_rules: list[CategoryRule] = []
 
     def import_from_csv(self, file_path: str) -> None:
         self.file_path = file_path
@@ -29,8 +27,7 @@ class TransactionsImporter(BaseTransactionsImporter):
 
             print(f'{len(pandas_data_frame.index)} transactions found on csv file')  # nopep8
 
-            self.__fetch_category_rules()
-            self.statement = Statement(pandas_data_frame, self.category_rules)
+            self.statement = Statement(pandas_data_frame)
 
             print('\nNormalizing Data')
             self.statement.normalize_date()
@@ -69,7 +66,3 @@ class TransactionsImporter(BaseTransactionsImporter):
             print(f'Error while saving data to db. {e}')
         finally:
             self.session.commit()
-
-    def __fetch_category_rules(self):
-        if len(self.category_rules) == 0:
-            self.category_rules = self.session.query(CategoryRule).all()

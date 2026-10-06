@@ -16,7 +16,7 @@ simple_pandas_data_frame = DataFrame(
 
 
 def test_normalize_date():
-    statement = Statement(simple_pandas_data_frame, [])
+    statement = Statement(simple_pandas_data_frame)
     statement.normalize_date()
     assert statement.data_frame["date"][0] == Timestamp(
         "2019-01-05 00:00:00")
@@ -28,7 +28,7 @@ def test_add_hash_column_formats_values_with_two_decimals():
         "description": ["PAGAMENTO DE CONVENIO - Vivo"],
         "value": [-233.8],
         "balance": [7566],
-    }), [])
+    }))
     statement.normalize_date()
 
     statement.add_hash_column()

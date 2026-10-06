@@ -4,7 +4,9 @@ from pytest import approx
 from decimal import Decimal
 from pandas import DataFrame
 from datetime import datetime
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+import financial.database as db
 from financial.importers.inter.importer import TransactionsImporter
 from financial.models.user import User
 from financial.models.category import Category
@@ -83,6 +85,24 @@ def test_inter_importer_replaces_previous_import(session: Session):
     importer.import_from_csv("tests/data/inter_statement.csv")
 
     assert session.query(InterTransaction).count() == 2
+
+
+def test_inter_importer_saves_through_a_separate_connection(tmp_path):
+    """The statement is written by its own connection, so clearing the
+    staging table must be committed first or that insert waits on its lock.
+    A file database is used because the in-memory one shares a connection.
+    """
+    engine = create_engine(f"sqlite:///{tmp_path / 'financial.db'}",
+                           connect_args={"timeout": 1})
+    db.Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        importer = TransactionsImporter(session)
+        importer.import_from_csv("tests/data/inter_statement.csv")
+
+        assert session.query(InterTransaction).count() == 2
+
+    engine.dispose()
 
 
 def __sha256(value: str) -> str:

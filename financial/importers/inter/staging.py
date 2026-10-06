@@ -7,8 +7,13 @@ from financial.models.user import User
 
 
 def clear(session: Session) -> None:
-    """Empty the staging table that receives the imported statement."""
+    """Empty the staging table that receives the imported statement.
+
+    Commits right away: the statement is inserted through another
+    connection, which would otherwise wait on this delete's locks.
+    """
     session.query(InterTransaction).delete()
+    session.commit()
 
 
 def merge_into_transactions(session: Session, user: User) -> None:

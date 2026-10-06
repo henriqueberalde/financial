@@ -5,7 +5,6 @@ from financial.base_transactions_importer import BaseTransactionsImporter
 from pandas import DataFrame as PandasDataFrame
 from financial.inter.data_frame import DataFrame as InterDataFrame
 from financial.entities.category_rule import CategoryRule
-from financial.entities.normalization_error import NormalizationError
 from financial.entities.user import User
 from financial.entities.transaction import Transaction
 from financial.entities.inter_transaction import InterTransaction
@@ -21,7 +20,6 @@ class TransactionsImporter(BaseTransactionsImporter):
         # self.user: User = user
         self.file_path: str
         self.category_rules: list[CategoryRule] = []
-        self.errors_messages: list[str] = []
 
     def import_from_csv(self, file_path: str) -> None:
         self.file_path = file_path
@@ -49,9 +47,6 @@ class TransactionsImporter(BaseTransactionsImporter):
             print('\nSaving...')
             self.__save_df()
 
-        except NormalizationError as e:
-            print(f'\nNormalizing Errors. \n\n{e}')
-            return None
         except Exception as e:
             print(f'\nError. \n\n{e}')
             return None

@@ -56,12 +56,6 @@ python financial/cli.py inter-import-statement -f assets/extrato.csv
 python financial/cli.py merge-inter-transactions -user_id 1 -user_account <conta>
 ```
 
-### Dash Board
-```bash
-python financial/dash_board/app.py
-```
-Acesse http://127.0.0.1:8050
-
 ### Jupyter Notebook
 Análises exploratórias ficam em `notebooks/`. Com o ambiente virtual ativado:
 
@@ -125,7 +119,6 @@ pycodestyle financial tests      # lint
 * [ ] `all month` Select a category and shows it on graph comparing all months and other things
 * [ ] `all month` Add total in every month
 * [ ] Set filters on url
-* [ ] Use dash pages
 
 # Answer theese questions with features
 * [x] How much did I spent `filter month`?
@@ -143,7 +136,6 @@ pycodestyle financial tests      # lint
 * [ ] ~~Use IMDB (in-memory database) for unit tests~~
 
 # Priority
-* [ ] Turn poc dashoboard into a feature with tests and etc
 * [ ] Add grouped context spends on dashboard
 * [ ] Import Nubank
 * [ ] Feature of transaction substitution

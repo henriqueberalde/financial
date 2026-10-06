@@ -54,14 +54,12 @@ class TransactionsImporter(BaseTransactionsImporter):
         return df
 
     def __save_df(self) -> None:
-        engine = self.session.get_bind()
-        mysql_connection = engine.connect()
-
         try:
-            self.statement.data_frame.to_sql(name='inter_transactions',
-                                             con=mysql_connection,
-                                             if_exists='append',
-                                             index=False)
+            with self.session.get_bind().connect() as connection:
+                self.statement.data_frame.to_sql(name='inter_transactions',
+                                                 con=connection,
+                                                 if_exists='append',
+                                                 index=False)
         except Exception as e:
             print(f'Error while saving data to db. {e}')
         finally:

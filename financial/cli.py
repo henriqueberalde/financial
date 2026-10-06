@@ -4,13 +4,13 @@ import financial.database as db
 from sqlalchemy.orm import Session
 from click_repl import register_repl
 from financial.inter.transactions_importer import TransactionsImporter
-from financial.entities.user import User
-from financial.entities.transaction import Transaction
-from financial.entities.inter_transaction import InterTransaction
-from financial.entities.category import Category
-from financial.entities.category_rule import CategoryRule
-from financial.entities.transactions_categories import TransactionsCategories
-from financial.entities.adjustment import Adjustment
+from financial.models.user import User
+from financial.models.transaction import Transaction
+from financial.models.inter_transaction import InterTransaction
+from financial.models.category import Category
+from financial.models.category_rule import CategoryRule
+from financial.models.transaction_category import TransactionCategory
+from financial.models.adjustment import Adjustment
 
 
 @click.group()
@@ -80,11 +80,11 @@ def set_category(category_name: str, transaction_id: int) -> None:
     session = db.get_session()
     category = find_category(session, category_name)
 
-    tc = TransactionsCategories(category_id=category.id,
-                                transaction_id=transaction_id)
+    tc = TransactionCategory(category_id=category.id,
+                             transaction_id=transaction_id)
     session.add(tc)
     session.commit()
-    TransactionsCategories.set_categories_by_user(session)
+    TransactionCategory.set_categories_by_user(session)
 
     print('\ndone')
 
@@ -131,7 +131,7 @@ def reprocess_categories(session: Session) -> None:
         session, session.query(CategoryRule).all())
     print_category_conflicts(conflicts)
 
-    TransactionsCategories.set_categories_by_user(session)
+    TransactionCategory.set_categories_by_user(session)
 
 
 def print_category_conflicts(conflicts: list[str]) -> None:

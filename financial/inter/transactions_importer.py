@@ -5,8 +5,8 @@ from financial import constants
 from financial.base_transactions_importer import BaseTransactionsImporter
 from pandas import DataFrame as PandasDataFrame
 from financial.inter.data_frame import DataFrame as InterDataFrame
-from financial.entities.category_rule import CategoryRule
-from financial.entities.inter_transaction import InterTransaction
+from financial.models.category_rule import CategoryRule
+from financial.models.inter_transaction import InterTransaction
 
 
 class TransactionsImporter(BaseTransactionsImporter):

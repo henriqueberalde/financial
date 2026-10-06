@@ -8,12 +8,12 @@ import financial.database as db
 from factories import make_transaction
 
 from financial.cli import cli, main, print_category_conflicts
-from financial.entities.adjustment import Adjustment
-from financial.entities.category import Category
-from financial.entities.category_rule import CategoryRule
-from financial.entities.inter_transaction import InterTransaction
-from financial.entities.transaction import Transaction
-from financial.entities.transactions_categories import TransactionsCategories
+from financial.models.adjustment import Adjustment
+from financial.models.category import Category
+from financial.models.category_rule import CategoryRule
+from financial.models.inter_transaction import InterTransaction
+from financial.models.transaction import Transaction
+from financial.models.transaction_category import TransactionCategory
 
 
 @pytest.fixture(autouse=True)
@@ -77,7 +77,7 @@ def test_set_category(session: Session):
     invoke("set-category", "-category_name", "Gas",
            "-transaction_id", str(transaction.id))
 
-    assert session.query(TransactionsCategories).count() == 1
+    assert session.query(TransactionCategory).count() == 1
     assert session.get(Transaction, transaction.id).category_id == \
         category.id
 

@@ -7,10 +7,7 @@ from sqlalchemy.pool import StaticPool
 
 import financial.database as db
 
-# Mapped classes must be imported so their tables are in db.Base.metadata
-import financial.entities.adjustment  # noqa: F401
-import financial.entities.inter_transaction  # noqa: F401
-import financial.entities.transactions_categories  # noqa: F401
+import financial.models  # noqa: F401  (registers every table)
 
 
 @pytest.fixture()

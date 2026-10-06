@@ -6,10 +6,10 @@ from pandas import DataFrame as PandasDataFrame
 from datetime import datetime
 from sqlalchemy.orm import Session
 from financial.inter.transactions_importer import TransactionsImporter
-from financial.entities.user import User
-from financial.entities.category import Category
-from financial.entities.category_rule import CategoryRule
-from financial.entities.inter_transaction import InterTransaction
+from financial.models.user import User
+from financial.models.category import Category
+from financial.models.category_rule import CategoryRule
+from financial.models.inter_transaction import InterTransaction
 
 user = User(id=1, account="123")
 

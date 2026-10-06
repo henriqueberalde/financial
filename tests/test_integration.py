@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from financial.inter.transactions_importer import TransactionsImporter
-from financial.entities.inter_transaction import InterTransaction
-from financial.entities.user import User
-from financial.entities.adjustment import Adjustment
-from financial.entities.transaction import Transaction
+from financial.models.inter_transaction import InterTransaction
+from financial.models.user import User
+from financial.models.adjustment import Adjustment
+from financial.models.transaction import Transaction
 
 
 def test_keep_original_transaction_after_merge(session: Session):

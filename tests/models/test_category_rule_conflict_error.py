@@ -1,6 +1,6 @@
-from financial.entities.category import Category
-from financial.entities.category_rule import CategoryRule
-from financial.entities.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
+from financial.models.category import Category
+from financial.models.category_rule import CategoryRule
+from financial.models.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
 
 
 def test_message_lists_each_conflicting_category_once():

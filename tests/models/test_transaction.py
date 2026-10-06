@@ -4,9 +4,9 @@ import pytest
 from sqlalchemy.orm import Session
 from datetime import datetime
 from factories import make_transaction
-from financial.entities.transaction import Transaction
-from financial.entities.category import Category
-from financial.entities.category_rule import CategoryRule
+from financial.models.transaction import Transaction
+from financial.models.category import Category
+from financial.models.category_rule import CategoryRule
 
 
 def test_transaction_set_context_of_many(session: Session):

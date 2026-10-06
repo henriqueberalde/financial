@@ -1,6 +1,6 @@
 import financial.database as db
 
-from financial.entities.transaction import Transaction
+from financial.models.transaction import Transaction
 from sqlalchemy import Column, Integer, ForeignKey, String, Table
 from sqlalchemy.orm import relationship, Session
 

@@ -3,7 +3,7 @@ import financial.database as db
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, text
 from financial.constants import INTER_BANK_CODE
-from financial.entities.user import User
+from financial.models.user import User
 from financial.hashing import transaction_hash
 
 

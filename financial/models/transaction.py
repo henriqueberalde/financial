@@ -5,9 +5,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Iterable, Any
-from financial.entities.category import Category
-from financial.entities.category_rule import CategoryRule
-from financial.entities.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
+from financial.models.category_rule import CategoryRule
+from financial.models.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
 from financial.hashing import transaction_hash
 
 

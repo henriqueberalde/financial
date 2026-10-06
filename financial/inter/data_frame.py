@@ -2,7 +2,7 @@ import pandas
 
 from pandas import DataFrame as PandasDataFrame
 from financial.constants import INTER_CSV_DATE_FORMAT
-from financial.entities.category_rule import CategoryRule
+from financial.models.category_rule import CategoryRule
 from financial.hashing import transaction_hash
 
 

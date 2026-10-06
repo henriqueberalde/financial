@@ -1,5 +1,5 @@
-from financial.entities.category_rule import CategoryRule
-from financial.entities.category import Category
+from financial.models.category_rule import CategoryRule
+from financial.models.category import Category
 
 
 def test_distinct_categories():

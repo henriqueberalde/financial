@@ -1,4 +1,4 @@
-from financial.entities.category_rule import CategoryRule
+from financial.models.category_rule import CategoryRule
 
 
 class CategoryRuleConflictError(Exception):

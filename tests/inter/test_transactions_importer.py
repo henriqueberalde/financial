@@ -3,7 +3,7 @@ import hashlib
 from pytest import approx
 from decimal import Decimal
 from pandas import DataFrame as PandasDataFrame
-from sqlite3 import Timestamp
+from datetime import datetime
 from sqlalchemy.orm import Session
 from financial.inter.transactions_importer import TransactionsImporter
 from financial.entities.user import User
@@ -38,8 +38,8 @@ def test_inter_importer(session: Session):
 
     assert len(transactions) == 2
 
-    assert transactions[0].date == Timestamp(2019, 1, 5)
-    assert transactions[1].date == Timestamp(2019, 1, 6)
+    assert transactions[0].date == datetime(2019, 1, 5)
+    assert transactions[1].date == datetime(2019, 1, 6)
 
     assert transactions[0].description == "PAGAMENTO DE CONVENIO - Vivo"
     assert transactions[1].description == "PAGAMENTO DE CONVENIO - Gas"

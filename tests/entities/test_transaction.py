@@ -2,7 +2,7 @@ import hashlib
 import pytest
 
 from sqlalchemy.orm import Session
-from sqlite3 import Timestamp
+from datetime import datetime
 from factories import make_transaction
 from financial.entities.transaction import Transaction
 from financial.entities.category import Category
@@ -145,7 +145,7 @@ def test_original_value_defaults_to_value():
 
 
 def test_original_value_is_kept_when_given():
-    transaction = Transaction(date=Timestamp(2022, 10, 1), description="t1",
+    transaction = Transaction(date=datetime(2022, 10, 1), description="t1",
                               value=0, original_value=10, balance=1)
 
     assert transaction.original_value == 10
@@ -159,7 +159,7 @@ def test_original_hash_is_generated_from_date_description_value_and_balance():
 
 
 def test_original_hash_is_kept_when_given():
-    transaction = Transaction(date=Timestamp(2022, 10, 1), description="t1",
+    transaction = Transaction(date=datetime(2022, 10, 1), description="t1",
                               value=1, balance=1, original_hash="given")
 
     assert transaction.original_hash == "given"

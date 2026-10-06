@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from click_repl import register_repl
 from financial.importers.inter.importer import TransactionsImporter
 from financial.models.user import User
-from financial.importers.inter.model import InterTransaction
+from financial.importers.inter import staging
 from financial.models.category import Category
 from financial.models.category_rule import CategoryRule
 from financial.services import adjustments, categorization, transactions
@@ -37,8 +37,7 @@ def merge_inter_transactions(user_id: int, user_account: str) -> None:
     session = db.get_session()
 
     print('\nMerging inter transactions into transactions')
-    InterTransaction.merge_to_transactions(session,
-                                           User(user_id, user_account))
+    staging.merge_into_transactions(session, User(user_id, user_account))
 
     reprocess_categories(session)
 

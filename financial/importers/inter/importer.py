@@ -3,7 +3,7 @@ from financial.importers.base import BaseTransactionsImporter
 from financial.importers.inter import constants
 from pandas import DataFrame, read_csv
 from financial.importers.inter.statement import Statement
-from financial.importers.inter.model import InterTransaction
+from financial.importers.inter import staging
 
 
 class TransactionsImporter(BaseTransactionsImporter):
@@ -19,7 +19,7 @@ class TransactionsImporter(BaseTransactionsImporter):
 
         try:
             print('\nCleaning up inter_transactions')
-            InterTransaction.cleanup_inter_transactions(self.session)
+            staging.clear(self.session)
 
             print('\nReading File')
             print(f'{self.file_path}')

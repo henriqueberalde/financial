@@ -1,9 +1,6 @@
 import financial.database as db
 
-from sqlalchemy.orm import Session
-from sqlalchemy import Column, Integer, String, DateTime, Numeric, text
-from financial.importers.inter.constants import BANK_CODE
-from financial.models.user import User
+from sqlalchemy import Column, Integer, String, DateTime, Numeric
 from financial.hashing import transaction_hash
 
 
@@ -22,48 +19,6 @@ class InterTransaction(db.Base):
     value = Column(Numeric)
     balance = Column(Numeric)
     hash = Column(String)
-
-    @staticmethod
-    def cleanup_inter_transactions(session: Session) -> None:
-        session.query(InterTransaction).delete()
-
-    @staticmethod
-    def merge_to_transactions(session: Session, user: User) -> None:
-        try:
-            session.execute(text("""INSERT INTO transactions (
-                                    user_id,
-                                    user_account,
-                                    bank,
-                                    date,
-                                    description,
-                                    value,
-                                    original_value,
-                                    balance,
-                                    original_hash
-                                )
-                                SELECT
-                                    :user_id,
-                                    :user_account,
-                                    :bank,
-                                    it.date,
-                                    it.description,
-                                    it.value,
-                                    it.value,
-                                    it.balance,
-                                    it.hash
-                                from inter_transactions it
-                                left join transactions t on
-                                    it.hash = t.original_hash
-                            where t.id is null;"""), {
-                                "user_id": user.id,
-                                "user_account": user.account,
-                                "bank": BANK_CODE,
-                            })
-            session.commit()
-
-        except Exception as e:
-            print(f"Error while merging transactions from inter.{e}")
-            session.rollback()
 
     def __generate_hash(self) -> None:
         self.hash = transaction_hash(

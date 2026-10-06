@@ -2,6 +2,7 @@ import hashlib
 
 from pytest import approx
 from decimal import Decimal
+from pandas import DataFrame as PandasDataFrame
 from sqlite3 import Timestamp
 from sqlalchemy.orm import Session
 from financial.inter.transactions_importer import TransactionsImporter
@@ -51,6 +52,39 @@ def test_inter_importer(session: Session):
 
     assert transactions[0].hash == hashed_t0
     assert transactions[1].hash == hashed_t1
+
+
+def test_inter_importer_reports_missing_file(session: Session, capsys):
+    TransactionsImporter(session).import_from_csv("tests/missing.csv")
+
+    assert "Error." in capsys.readouterr().out
+    assert session.query(InterTransaction).count() == 0
+
+
+def test_inter_importer_reports_save_errors(session: Session,
+                                            monkeypatch,
+                                            capsys):
+    def failing_to_sql(*args, **kwargs):
+        raise RuntimeError("data too long")
+
+    monkeypatch.setattr(PandasDataFrame, "to_sql", failing_to_sql)
+
+    TransactionsImporter(session).import_from_csv("tests/test_import.csv")
+
+    assert "Error while saving data to db. data too long" in capsys.readouterr().out  # nopep8
+    assert session.query(InterTransaction).count() == 0
+
+
+def test_inter_importer_replaces_previous_import(session: Session):
+    session.add(CategoryRule(category=Category(name="Vivo"), rule="vivo"))
+    session.commit()
+    importer = TransactionsImporter(session)
+
+    importer.import_from_csv("tests/test_import.csv")
+    importer.import_from_csv("tests/test_import.csv")
+
+    assert session.query(InterTransaction).count() == 2
+    assert len(importer.category_rules) == 1
 
 
 def __sha256(value: str) -> str:

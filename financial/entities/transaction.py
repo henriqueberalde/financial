@@ -1,14 +1,14 @@
-import hashlib
 import re
 import financial.entities.db as db
 
 from sqlalchemy.orm import Session
-from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey, Table  # nopep8
+from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Iterable, Any
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
 from financial.entities.category_rule_conflict_error import CategoryRuleConflictError  # nopep8
+from financial.hashing import transaction_hash
 
 
 class Transaction(db.Base):
@@ -111,10 +111,5 @@ class Transaction(db.Base):
         raise CategoryRuleConflictError(description, matched_rules)
 
     def __generate_hash(self) -> None:
-        date = self.date.strftime("%Y-%m-%d %H:%M:%S")  # type: ignore
-        concat_result = f"{date}{self.description}{self.value}{self.balance}"  # nopep8
-        self.original_hash = Transaction.str_to_hash(concat_result)
-
-    @staticmethod
-    def str_to_hash(str: str) -> str:
-        return hashlib.sha256(str.encode('utf-8')).hexdigest()
+        self.original_hash = transaction_hash(
+            self.date, self.description, self.value, self.balance)  # type: ignore # nopep8

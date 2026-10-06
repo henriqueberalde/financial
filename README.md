@@ -1,76 +1,95 @@
 An application to organize my financial life.
 
 # Setup
-Requisitos:
+Requirements:
 - Python 3.14
-- MySQL 8.4 (no Ubuntu: `sudo apt install mysql-server`; os comandos SQL abaixo rodam em `sudo mysql`)
+- MySQL 8.4 (on Ubuntu: `sudo apt install mysql-server`; run the SQL commands below in `sudo mysql`)
 
-### 1. Banco de dados
-Crie os bancos e usuários esperados pelo projeto (configurados em `alembic.ini` e `financial/entities/db.py`):
+### 1. Database
+Create the application database and user. Choose a password and use it in `.env` (step 3):
 
 ```sql
 CREATE DATABASE financial;
-CREATE USER 'financial'@'localhost' IDENTIFIED BY 'pass_123';
+CREATE USER 'financial'@'localhost' IDENTIFIED BY '<password>';
 GRANT ALL PRIVILEGES ON financial.* TO 'financial'@'localhost';
 
--- usado apenas pelos testes
+-- used by the tests only
 CREATE DATABASE financial_test;
 CREATE USER 'financial_test'@'localhost' IDENTIFIED BY 'pass123';
 GRANT ALL PRIVILEGES ON financial_test.* TO 'financial_test'@'localhost';
 ```
 
-### 2. Ambiente virtual
-Na raiz do projeto:
+### 2. Virtual environment
+From the project root:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install --upgrade pip
 pip install -r requirements-dev.txt
-pip install -e .                 # instala o pacote `financial` em modo editável
+pip install -e .                 # installs the `financial` package in editable mode
 ```
 
-Para sair do ambiente virtual: `deactivate`. Nas próximas vezes basta rodar `source .venv/bin/activate`.
+To leave the virtual environment: `deactivate`. Next time, just run `source .venv/bin/activate`.
 
-### 3. Migrations
-O `alembic.ini` não tem seção padrão, então informe o ambiente com `-n`:
+### 3. Configuration (.env)
+Passwords and per-environment values live in `.env`, which is not versioned:
 
 ```bash
-alembic -n development upgrade head
-alembic -n test upgrade head     # banco de testes
+cp .env_example .env             # then set the database password in .env
+```
+
+| Variable | Usage |
+|---|---|
+| `DATABASE_URL` | SQLAlchemy URL of the application database (CLI, notebooks and Alembic) |
+
+Variables set in the environment take precedence over `.env`.
+Library settings and business rules (Inter CSV layout, bank code, etc.) live in `financial/constants.py`.
+
+### 4. Migrations
+Alembic uses `DATABASE_URL` from `.env`:
+
+```bash
+alembic upgrade head
+```
+
+To migrate another database (the test one, for example), override the variable:
+
+```bash
+DATABASE_URL=mysql+pymysql://financial_test:pass123@localhost/financial_test alembic upgrade head
 ```
 
 # Usage
-Com o ambiente virtual ativado:
+With the virtual environment activated:
 
 ### CLI
 ```bash
-python financial/cli.py --help   # lista os comandos
-python financial/cli.py repl     # modo interativo
+python financial/cli.py --help   # lists the commands
+python financial/cli.py repl     # interactive mode
 ```
 
-Fluxo básico de importação de um extrato do Inter (CSV separado por `;`, salvo em `assets/`):
+Basic flow to import a Banco Inter statement (`;`-separated CSV, saved in `assets/`):
 
 ```bash
-python financial/cli.py inter-import-statement -f assets/extrato.csv
-python financial/cli.py merge-inter-transactions -user_id 1 -user_account <conta>
+python financial/cli.py inter-import-statement -f assets/statement.csv
+python financial/cli.py merge-inter-transactions -user_id 1 -user_account <account>
 ```
 
 ### Jupyter Notebook
-Análises exploratórias ficam em `notebooks/`. Com o ambiente virtual ativado:
+Exploratory analyses live in `notebooks/`. With the virtual environment activated:
 
 ```bash
 jupyter notebook notebooks/analise_financeira.ipynb
 ```
 
-As saídas dos notebooks contêm dados financeiros reais. Para não commitá-las, ative o `nbstripout` uma vez por clone (ele limpa as saídas no `git add`, sem alterar o arquivo local):
+Notebook outputs contain real financial data. To keep them out of commits, enable `nbstripout` once per clone (it strips outputs on `git add` without changing the local file):
 
 ```bash
 nbstripout --install
 ```
 
 # Tests
-Requer o banco `financial_test` com as migrations aplicadas:
+Requires the `financial_test` database with the migrations applied:
 
 ```bash
 pytest

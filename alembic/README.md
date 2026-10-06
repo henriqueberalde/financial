@@ -1,11 +1,9 @@
-Generic single-database configuration.
+Generic single-database configuration. The database URL comes from `DATABASE_URL` (`.env`).
 ### Create a Revision
-* ```alembic -n development revision -m "some description"```
+* ```alembic revision -m "some description"```
 
-### Upgrade / Downgrade migrations on development env
-* ```alembic -n development upgrade head```
-* ```alembic -n development downgrade -1```
+### Upgrade / Downgrade migrations
+* ```alembic upgrade head```
+* ```alembic downgrade -1```
 
-### Upgrade / Downgrade migrations on test env
-* ```alembic -n test upgrade head```
-* ```alembic -n test downgrade -1```
+To run against another database, override the variable: ```DATABASE_URL=<url> alembic upgrade head```

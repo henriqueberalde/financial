@@ -129,7 +129,7 @@ class Adjustment(db.Base):
 
         if not has_spend or not has_gain:
             raise Exception(
-                f"Transactions must have at least one spend and one gain"
+                "Transactions must have at least one spend and one gain"
             )
 
         return result

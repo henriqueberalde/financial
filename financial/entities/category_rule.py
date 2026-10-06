@@ -1,5 +1,4 @@
 import financial.entities.db as db
-from typing import Any
 
 from financial.entities.category import Category
 from sqlalchemy import Column, Integer, String, ForeignKey

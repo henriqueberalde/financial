@@ -1,5 +1,5 @@
 import click
-import financial.entities.db as db
+import financial.database as db
 
 from sqlalchemy.orm import Session
 from click_repl import register_repl

@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
-import financial.entities.db as db
+import financial.database as db
 
 # Mapped classes must be imported so their tables are in db.Base.metadata
 import financial.entities.adjustment  # noqa: F401

@@ -3,7 +3,7 @@ import pytest
 from click.testing import CliRunner, Result
 from sqlalchemy.orm import Session
 
-import financial.entities.db as db
+import financial.database as db
 
 from factories import make_transaction
 

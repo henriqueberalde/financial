@@ -1,5 +1,5 @@
 import re
-import financial.entities.db as db
+import financial.database as db
 
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey

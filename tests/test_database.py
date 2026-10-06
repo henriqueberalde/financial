@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
-import financial.entities.db as db
+import financial.database as db
 
 
 def test_get_engine_uses_given_connection_string():

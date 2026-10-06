@@ -1,9 +1,9 @@
-import hashlib
 import financial.entities.db as db
 
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, DateTime, Numeric, text
 from financial.entities.user import User
+from financial.hashing import transaction_hash
 
 
 class InterTransaction(db.Base):
@@ -66,10 +66,5 @@ class InterTransaction(db.Base):
             session.rollback()
 
     def __generate_hash(self) -> None:
-        date = self.date.strftime("%Y-%m-%d %H:%M:%S")
-        concat_result = f"{date}{self.description}{self.value}{self.balance}"  # nopep8
-        self.hash = InterTransaction.str_to_hash(concat_result)
-
-    @staticmethod
-    def str_to_hash(str: str) -> str:
-        return hashlib.sha256(str.encode('utf-8')).hexdigest()
+        self.hash = transaction_hash(
+            self.date, self.description, self.value, self.balance)  # type: ignore # nopep8

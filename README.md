@@ -6,11 +6,11 @@ Requisitos:
 - MySQL 8.4 (no Ubuntu: `sudo apt install mysql-server`; os comandos SQL abaixo rodam em `sudo mysql`)
 
 ### 1. Banco de dados
-Crie os bancos e usuários esperados pelo projeto (configurados em `alembic.ini` e `financial/entities/db.py`):
+Crie o banco e o usuário da aplicação. Escolha uma senha e use-a no `.env` (passo 3):
 
 ```sql
 CREATE DATABASE financial;
-CREATE USER 'financial'@'localhost' IDENTIFIED BY 'pass_123';
+CREATE USER 'financial'@'localhost' IDENTIFIED BY '<senha>';
 GRANT ALL PRIVILEGES ON financial.* TO 'financial'@'localhost';
 
 -- usado apenas pelos testes
@@ -32,12 +32,33 @@ pip install -e .                 # instala o pacote `financial` em modo editáve
 
 Para sair do ambiente virtual: `deactivate`. Nas próximas vezes basta rodar `source .venv/bin/activate`.
 
-### 3. Migrations
-O `alembic.ini` não tem seção padrão, então informe o ambiente com `-n`:
+### 3. Configuração (.env)
+Senhas e valores que mudam por ambiente ficam no `.env`, que não é versionado:
 
 ```bash
-alembic -n development upgrade head
-alembic -n test upgrade head     # banco de testes
+cp .env_example .env             # depois edite o .env com a senha do banco
+```
+
+| Variável | Uso |
+|---|---|
+| `DATABASE_URL` | URL do SQLAlchemy do banco da aplicação (app, CLI, dashboard, notebooks e Alembic) |
+| `DASHBOARD_HOST`, `DASHBOARD_PORT` | Endereço do dashboard (padrão `127.0.0.1:8050`) |
+| `DASHBOARD_DEBUG` | `true` ativa o modo debug do Dash (padrão `false`) |
+
+Variáveis definidas no ambiente têm prioridade sobre o `.env`.
+Constantes de bibliotecas e regras de negócio (formato do CSV do Inter, código do banco etc.) ficam em `financial/constants.py`.
+
+### 4. Migrations
+O Alembic usa o `DATABASE_URL` do `.env`:
+
+```bash
+alembic upgrade head
+```
+
+Para aplicar em outro banco (por exemplo, o de testes), sobrescreva a variável:
+
+```bash
+DATABASE_URL=mysql+pymysql://financial_test:pass123@localhost/financial_test alembic upgrade head
 ```
 
 # Usage

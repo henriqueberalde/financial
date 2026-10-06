@@ -1,10 +1,11 @@
 import pytest
 
-from datetime import datetime
 from click.testing import CliRunner, Result
 from sqlalchemy.orm import Session
 
 import financial.entities.db as db
+
+from factories import make_transaction
 
 from financial.cli import cli, print_category_conflicts
 from financial.entities.adjustement import Adjustment
@@ -128,16 +129,8 @@ def test_print_category_conflicts_prints_nothing_without_conflicts(capsys):
 def __add_transactions(session: Session,
                        count: int,
                        description: str = "transaction") -> list[Transaction]:
-    transactions = [
-        Transaction(user_id=1,
-                    user_account="123",
-                    bank="077",
-                    date=datetime(2022, 10, 1),
-                    description=f"{description} {index}",
-                    value=1,
-                    balance=1)
-        for index in range(count)
-    ]
+    transactions = [make_transaction(f"{description} {index}")
+                    for index in range(count)]
     session.add_all(transactions)
     session.commit()
 

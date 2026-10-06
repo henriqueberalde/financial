@@ -3,6 +3,7 @@ import pytest
 
 from sqlalchemy.orm import Session
 from sqlite3 import Timestamp
+from factories import make_transaction
 from financial.entities.transaction import Transaction
 from financial.entities.category import Category
 from financial.entities.category_rule import CategoryRule
@@ -195,14 +196,7 @@ def test_set_context_of_many_rolls_back_on_error(session: Session,
 
 
 def __get_example_transaction(description: str) -> Transaction:
-    return Transaction(
-        user_id=1,
-        user_account="a",
-        bank=" ",
-        date=Timestamp(year=2022, month=10, day=1),
-        description=description,
-        value=1,
-        balance=1)
+    return make_transaction(description)
 
 
 def __get_example_category(name: str) -> Category:

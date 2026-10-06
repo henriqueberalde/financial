@@ -1,7 +1,6 @@
 import pytest
 
-from datetime import datetime
-from financial.entities.transaction import Transaction
+from factories import make_transaction
 from financial.entities.adjustement import Adjustment
 from sqlalchemy.orm import Session
 
@@ -200,22 +199,7 @@ def test_add_rolls_back_and_raises_on_error(session: Session, monkeypatch):
 
 
 def __transaction(session: Session, type: str):
-    value = 0
-
-    if type == 'spend':
-        value = -30
-    else:
-        value = 30
-
-    t = Transaction(
-        user_id=1,
-        user_account="a",
-        bank=" ",
-        date=datetime(year=2022, month=10, day=1),
-        description=f"{type} 1",
-        value=value,
-        balance=1
-    )
+    t = make_transaction(f"{type} 1", -30 if type == "spend" else 30)
 
     session.add(t)
     session.commit()

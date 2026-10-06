@@ -16,7 +16,6 @@ class TransactionsImporter(BaseTransactionsImporter):
 
         self.session = session
         self.data_frame: InterDataFrame
-        # self.user: User = user
         self.file_path: str
         self.category_rules: list[CategoryRule] = []
         self.errors_messages: list[str] = []

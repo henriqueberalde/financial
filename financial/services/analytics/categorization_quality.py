@@ -84,10 +84,17 @@ def categorization_quality(session: Session,
 
     return CategorizationQuality(
         str(window[0]), str(end), UNCATEGORIZED_TARGET,
-        _share(missing["amount"].sum(), recent["amount"].sum()),
+        uncategorized_share(recent),
         len(missing), by_year(spent), methods(session, recent),
         uncategorized_merchants(missing),
         conflicts(descriptions, rules), unused_rules(descriptions, rules))
+
+
+def uncategorized_share(spent: pd.DataFrame) -> float:
+    """Share of the expenses amount without category."""
+    missing = spent.loc[spent["category"] == UNCATEGORIZED, "amount"].sum()
+
+    return _share(missing, spent["amount"].sum())
 
 
 def by_year(spent: pd.DataFrame) -> list[YearShare]:

@@ -3,7 +3,8 @@ from datetime import date
 
 import pandas as pd
 
-from financial.services.analytics import ledger, recurring, trends
+from financial.services.analytics import (categorization_quality, ledger,
+                                          recurring, trends)
 from financial.services.analytics.constants import (ABOVE_AVERAGE_MIN_RATIO,
                                                     ABOVE_AVERAGE_MIN_VALUE,
                                                     UNCATEGORIZED,
@@ -144,7 +145,9 @@ def alerts(frame: pd.DataFrame, month: pd.Period) -> list[Alert]:
         if item.status is not None
     ]
 
-    share = _uncategorized_share(frame, month)
+    spent = ledger.expenses(frame)
+    share = categorization_quality.uncategorized_share(
+        spent[spent["month"] == month])
     if share > UNCATEGORIZED_TARGET:
         result.append(Alert(UNCATEGORIZED_SHARE, UNCATEGORIZED, share,
                             UNCATEGORIZED_TARGET))
@@ -169,12 +172,3 @@ def _usual_value(item: recurring.RecurringExpense) -> float | None:
     before = [value for value in item.monthly[:-1] if value > 0]
 
     return round(float(pd.Series(before).median()), 2) if before else None
-
-
-def _uncategorized_share(frame: pd.DataFrame, month: pd.Period) -> float:
-    spent = ledger.expenses(frame)
-    spent = spent[spent["month"] == month]
-    total = spent["amount"].sum()
-    missing = spent.loc[spent["category"] == UNCATEGORIZED, "amount"].sum()
-
-    return round(float(missing / total), 4) if total > 0 else 0.0

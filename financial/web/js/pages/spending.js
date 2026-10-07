@@ -1,6 +1,7 @@
 import { api } from "../api.js";
 import { COLORS, sectorPalette, timelineChart, treemapChart } from "../charts.js";
-import { card, chart, empty, errorMessage, pageHeader, segmented, table } from "../components.js";
+import { card, categoryOptions, chart, empty, errorMessage, pageHeader, segmented,
+         table } from "../components.js";
 import { h } from "../dom.js";
 import { addMonths, brl, dateLabel, monthLabel, sectorLabel, UNCATEGORIZED } from "../format.js";
 import { go, refresh } from "../navigation.js";
@@ -198,7 +199,6 @@ function transactionTable(items, categories) {
 
 function categorySelect(row, categories) {
   const status = h("span", { className: "visually-hidden", role: "status" });
-  const sectors = Map.groupBy(categories, (category) => category.sector ?? UNCATEGORIZED);
 
   const select = h("select", {
     "aria-label": `Categoria de ${row.description}`,
@@ -214,10 +214,7 @@ function categorySelect(row, categories) {
     },
   },
   row.category_id == null ? h("option", { value: "", selected: true, disabled: true }, UNCATEGORIZED) : null,
-  [...sectors].map(([sector, items]) => h("optgroup", { label: sectorLabel(sector) },
-    items.map((category) => h("option", { value: category.id,
-                                          selected: category.id === row.category_id },
-                              category.name)))));
+  categoryOptions(categories, row.category_id));
 
   return [select, status];
 }

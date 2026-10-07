@@ -1,5 +1,5 @@
 import { h, s } from "./dom.js";
-import { addMonths, monthLong } from "./format.js";
+import { addMonths, monthLong, sectorLabel, UNCATEGORIZED } from "./format.js";
 
 export function card({ title, hint, actions, span = false }, ...children) {
   return h("section", { className: span ? "card span-2" : "card" },
@@ -119,4 +119,12 @@ export function empty(text) {
 
 export function errorMessage(text) {
   return h("p", { className: "error", role: "alert" }, text);
+}
+
+/** Category options grouped by sector. */
+export function categoryOptions(categories, selectedId) {
+  const sectors = Map.groupBy(categories, (category) => category.sector ?? UNCATEGORIZED);
+  return [...sectors].map(([sector, items]) => h("optgroup", { label: sectorLabel(sector) },
+    items.map((category) => h("option", { value: category.id, selected: category.id === selectedId },
+                              category.name))));
 }

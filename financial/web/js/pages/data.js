@@ -1,9 +1,9 @@
 import { api } from "../api.js";
 import { COLORS, shareByYearChart } from "../charts.js";
-import { card, chart, empty, errorMessage, kpi, monthPicker, monthTitle, pageHeader, stackedBar,
-         table } from "../components.js";
+import { card, categoryOptions, chart, empty, errorMessage, kpi, monthPicker, monthTitle,
+         pageHeader, stackedBar, table } from "../components.js";
 import { h } from "../dom.js";
-import { brl, dateLabel, monthLabel, percent, sectorLabel, UNCATEGORIZED } from "../format.js";
+import { brl, dateLabel, monthLabel, percent, UNCATEGORIZED } from "../format.js";
 import { go, refresh } from "../navigation.js";
 
 export async function render(params, { period, categories }) {
@@ -86,7 +86,6 @@ function escapeRegex(text) {
 function openRuleDialog(merchant, categories) {
   const dialog = document.getElementById("dialog");
   const feedback = h("div", { role: "status" });
-  const sectors = Map.groupBy(categories, (category) => category.sector ?? UNCATEGORIZED);
 
   const form = h("form", {
     method: "dialog",
@@ -114,8 +113,7 @@ function openRuleDialog(merchant, categories) {
   h("label", {}, "Categoria",
     h("select", { name: "category", required: true },
       h("option", { value: "", selected: true, disabled: true }, "Escolha a categoria"),
-      [...sectors].map(([sector, items]) => h("optgroup", { label: sectorLabel(sector) },
-        items.map((category) => h("option", { value: category.id }, category.name)))))),
+      categoryOptions(categories))),
   h("label", {}, "Regra (expressão regular, sem diferenciar maiúsculas)",
     h("input", { type: "text", name: "rule", required: true, value: escapeRegex(merchant),
                  className: "num" })),

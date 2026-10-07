@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import Any
 
+import pandas as pd
+
 from financial.models.transaction import Transaction
 
 
@@ -18,3 +20,7 @@ def make_transaction(description: str = "transaction",
         "balance": 1,
         **fields,
     })
+
+
+def month(text: str) -> pd.Period:
+    return pd.Period(text, freq="M")

@@ -1,10 +1,13 @@
 import click
+import uvicorn
 import financial.database as db
 
 from pathlib import Path
 
 from sqlalchemy.orm import Session
 from click_repl import register_repl
+from financial import settings
+from financial.api.app import create_app
 from financial.importers.inter.importer import TransactionsImporter
 from financial.models.user import User
 from financial.importers.inter import staging
@@ -157,6 +160,13 @@ def adjust(reason: str, transactions: str) -> None:
     adjustments.add_adjustment(session, reason, ids_param)
 
     print('\ndone')
+
+
+@cli.command()
+def dashboard() -> None:
+    """Serve the dashboard and its API"""
+    uvicorn.run(create_app(), host=settings.dashboard_host(),
+                port=settings.dashboard_port())
 
 
 def reprocess_categories(session: Session) -> None:

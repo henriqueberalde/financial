@@ -42,7 +42,9 @@ def recurring(frame: pd.DataFrame, end: pd.Period) -> RecurringExpenses:
     categories = spent.groupby("merchant")["category"] \
         .agg(lambda values: values.mode().iloc[0])
 
-    items = [_expense(str(merchant), str(categories[merchant]), monthly)
+    with_data = ledger.months_with_data(frame)
+    items = [_expense(str(merchant), str(categories[merchant]), monthly,
+                      with_data)
              for merchant, monthly in totals.iterrows()]
     items = sorted([item for item in items if item is not None],
                    key=lambda item: -item.average)
@@ -56,11 +58,14 @@ def recurring(frame: pd.DataFrame, end: pd.Period) -> RecurringExpenses:
 
 def _expense(merchant: str,
              category: str,
-             monthly: pd.Series) -> RecurringExpense | None:
+             monthly: pd.Series,
+             with_data: pd.PeriodIndex) -> RecurringExpense | None:
     present = monthly[monthly > 0]
     recent = monthly.iloc[-NEW_RECURRING_MONTHS:]
     earlier = monthly.iloc[:-NEW_RECURRING_MONTHS]
-    is_new = bool((recent > 0).all() and (earlier == 0).all())
+    # Absent before only counts when there was data before
+    is_new = bool((recent > 0).all() and (earlier == 0).all() and
+                  earlier.index.isin(with_data).any())
 
     if len(present) < RECURRING_MIN_MONTHS and not is_new:
         return None

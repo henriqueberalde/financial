@@ -51,6 +51,12 @@ def test_recurring_flags_new_and_price_increases(add, load):
                      "POWER": None}
 
 
+def test_recurring_is_not_new_when_the_data_starts_recently(add, load):
+    add_monthly(add, "STREAMING", [0] * 9 + [40, 40, 40])
+
+    assert recurring.recurring(load(), END).items == []
+
+
 def test_recurring_without_income(add, load):
     add_monthly(add, "RENT", [1000] * 12)
 

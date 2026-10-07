@@ -136,7 +136,8 @@ function filters(state, period, update) {
 function breadcrumb(levels, drillTo) {
   const items = [{ label: "Todas as despesas", path: [] }];
   levels.forEach((name, index) => {
-    if (name) items.push({ label: index === 0 ? sectorLabel(name) : name,
+    // Uncategorized expenses have the same sector and category
+    if (name && name !== levels[index - 1]) items.push({ label: index === 0 ? sectorLabel(name) : name,
                            path: levels.slice(0, index + 1) });
   });
 

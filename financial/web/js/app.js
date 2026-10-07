@@ -8,6 +8,7 @@ import * as spending from "./pages/spending.js";
 
 const PAGES = { overview, spending, recurring, data };
 const main = document.getElementById("page");
+const dialog = document.getElementById("dialog");
 let context = null;
 let rendering = 0;
 
@@ -26,6 +27,7 @@ async function render() {
     else anchor.removeAttribute("aria-current");
   }
 
+  if (dialog.open) dialog.close();
   main.classList.add("loading");
   try {
     context ??= await loadContext();

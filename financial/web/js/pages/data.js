@@ -96,14 +96,15 @@ function openRuleDialog(merchant, categories) {
         const result = await api.post("/category-rules", {
           category_id: Number(fields.get("category")), rule: fields.get("rule"),
         });
+        // The page reloads when the dialog closes, showing the new rule
+        dialog.addEventListener("close", refresh, { once: true });
         if (result.conflicts.length) {
           feedback.replaceChildren(errorMessage(
-            `Regra criada. ${result.conflicts.length} transações ficaram sem categoria por conflito.`));
+            `Regra criada. ${result.conflicts.length} transações estão sem categoria por conflito de regras.`));
           form.querySelector("[type=submit]").remove();
         } else {
           dialog.close();
         }
-        refresh();
       } catch (error) {
         feedback.replaceChildren(errorMessage(error.message));
       }

@@ -195,3 +195,16 @@ def __add_transactions(session: Session,
     session.commit()
 
     return transactions
+
+
+def test_dashboard_serves_the_app(monkeypatch):
+    served = {}
+    monkeypatch.setattr("financial.cli.uvicorn.run",
+                        lambda app, host, port: served.update(
+                            app=app, host=host, port=port))
+    monkeypatch.setenv("DASHBOARD_PORT", "9000")
+
+    invoke("dashboard")
+
+    assert served["port"] == 9000
+    assert served["app"].title == "financial"

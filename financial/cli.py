@@ -1,10 +1,13 @@
 import click
+import uvicorn
 import financial.database as db
 
 from pathlib import Path
 
 from sqlalchemy.orm import Session
 from click_repl import register_repl
+from financial import settings
+from financial.api.app import create_app
 from financial.importers.inter.importer import TransactionsImporter
 from financial.models.user import User
 from financial.importers.inter import staging
@@ -12,9 +15,7 @@ from financial.importers.inter_credit_card import staging as card_staging
 from financial.importers.inter_credit_card.constants import DATA_DIR
 from financial.importers.inter_credit_card.importer import CreditCardImporter
 from financial.models.category import Category
-from financial.models.category_rule import CategoryRule
 from financial.services import adjustments, categorization, transactions
-from financial.models.transaction_category import TransactionCategory
 
 
 @click.group()
@@ -124,11 +125,8 @@ def set_category(category_name: str, transaction_id: int) -> None:
     session = db.get_session()
     category = categorization.find_category(session, category_name)
 
-    tc = TransactionCategory(category_id=category.id,
-                             transaction_id=transaction_id)
-    session.add(tc)
-    session.commit()
-    categorization.set_categories_by_user(session)
+    categorization.set_user_category(session, transaction_id,
+                                     category.id)  # type: ignore
 
     print('\ndone')
 
@@ -141,10 +139,9 @@ def create_category_rule(category_name: str, rule: str) -> None:
     session = db.get_session()
     category = categorization.find_category(session, category_name)
 
-    session.add(CategoryRule(category_id=category.id, rule=rule))
-    session.commit()
-
-    reprocess_categories(session)
+    print('\nReprocessing categories')
+    print_category_conflicts(
+        categorization.add_rule(session, category.id, rule))  # type: ignore
 
     print('\ndone')
 
@@ -163,6 +160,13 @@ def adjust(reason: str, transactions: str) -> None:
     adjustments.add_adjustment(session, reason, ids_param)
 
     print('\ndone')
+
+
+@cli.command()
+def dashboard() -> None:
+    """Serve the dashboard and its API"""
+    uvicorn.run(create_app(), host=settings.dashboard_host(),
+                port=settings.dashboard_port())
 
 
 def reprocess_categories(session: Session) -> None:

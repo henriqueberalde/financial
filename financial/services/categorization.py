@@ -32,6 +32,33 @@ def find_category(session: Session, name: str) -> Category:
     return session.query(Category).filter_by(name=name).one()
 
 
+def set_user_category(session: Session,
+                      transaction_id: int,
+                      category_id: int) -> None:
+    """Pin the category chosen by the user to a transaction, replacing a
+    previous choice. User choices win over category rules."""
+    session.query(TransactionCategory).filter_by(
+        transaction_id=transaction_id).delete()
+    session.add(TransactionCategory(category_id=category_id,
+                                    transaction_id=transaction_id))
+    session.commit()
+    set_categories_by_user(session)
+
+
+def add_rule(session: Session, category_id: int, rule: str) -> list[str]:
+    """Create a regex rule for a category and reprocess every transaction.
+    Returns the conflict messages of the transactions that were skipped."""
+    try:
+        re.compile(rule)
+    except re.error as e:
+        raise ValueError(f"Invalid rule '{rule}': {e}") from e
+
+    session.add(CategoryRule(category_id=category_id, rule=rule))
+    session.commit()
+
+    return reprocess_categories(session)
+
+
 def reprocess_categories(session: Session) -> list[str]:
     """Apply category rules, then the categories set by the user.
     Returns the conflict messages of the transactions that were skipped."""

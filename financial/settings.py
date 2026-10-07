@@ -19,3 +19,11 @@ def get_env(name: str, default: str | None = None) -> str:
 
 def database_url() -> str:
     return get_env("DATABASE_URL")
+
+
+def dashboard_host() -> str:
+    return get_env("DASHBOARD_HOST", "127.0.0.1")
+
+
+def dashboard_port() -> int:
+    return int(get_env("DASHBOARD_PORT", "8000"))

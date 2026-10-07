@@ -1,3 +1,5 @@
+import pytest
+
 from sqlalchemy.orm import Session
 
 from factories import make_transaction
@@ -120,3 +122,42 @@ def __add_categories_with_rules(session: Session) -> list[Category]:
     session.add_all([CategoryRule(category_id=category.id, rule=category.name)
                      for category in categories])
     return categories
+
+
+def test_set_user_category_replaces_the_previous_choice(session: Session):
+    gas, water = Category(name="Gas"), Category(name="Water")
+    transaction = make_transaction()
+    session.add_all([gas, water, transaction])
+    session.commit()
+
+    categorization.set_user_category(session, transaction.id, gas.id)
+    categorization.set_user_category(session, transaction.id, water.id)
+
+    assert session.query(TransactionCategory).one().category_id == water.id
+    assert transaction.category_id == water.id
+
+
+def test_add_rule_categorizes_and_reports_conflicts(session: Session):
+    gas, water = Category(name="Gas"), Category(name="Water")
+    session.add(CategoryRule(category=water, rule="agua"))
+    matched = make_transaction("AUTO POSTO")
+    conflicting = make_transaction("POSTO AGUA")
+    session.add_all([gas, matched, conflicting])
+    session.commit()
+
+    conflicts = categorization.add_rule(session, gas.id, "posto")
+
+    assert len(conflicts) == 1
+    assert matched.category_id == gas.id
+    assert conflicting.category_id is None
+
+
+def test_add_rule_rejects_invalid_regex(session: Session):
+    gas = Category(name="Gas")
+    session.add(gas)
+    session.commit()
+
+    with pytest.raises(ValueError, match="Invalid rule"):
+        categorization.add_rule(session, gas.id, "posto(")
+
+    assert session.query(CategoryRule).count() == 0

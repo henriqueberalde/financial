@@ -1,1 +1,27 @@
-<!doctype html><title>financial</title>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>financial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/i18n/langPT-br.js"></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Páginas">
+      <span class="brand">financial</span>
+      <a href="#/overview" data-page="overview">Visão geral</a>
+      <a href="#/spending" data-page="spending">Gastos</a>
+      <a href="#/recurring" data-page="recurring">Recorrentes e anomalias</a>
+      <a href="#/data" data-page="data">Dados</a>
+    </nav>
+    <main id="page" class="page" aria-live="polite"></main>
+  </div>
+  <dialog id="dialog"></dialog>
+</body>
+</html>

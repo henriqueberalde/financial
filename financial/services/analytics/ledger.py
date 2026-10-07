@@ -1,5 +1,7 @@
 import re
 
+from typing import Literal
+
 import pandas as pd
 
 from sqlalchemy import select
@@ -13,6 +15,7 @@ from financial.services.analytics.constants import (INVESTMENT_PATTERN,
 
 INCOME, EXPENSE, INVESTMENT = "income", "expense", "investment"
 ACCOUNT, CARD = "account", "card"
+Source = Literal["account", "card"]
 
 COLUMNS = ["id", "date", "description", "value", "balance", "context",
            "category_id", "category", "sector"]
@@ -95,8 +98,16 @@ def months_with_data(frame: pd.DataFrame) -> pd.PeriodIndex:
     return pd.PeriodIndex(sorted(frame["month"].unique()), freq="M")
 
 
-def last_month(frame: pd.DataFrame) -> pd.Period | None:
-    return None if frame.empty else frame["month"].max()
+def last_complete_month(frame: pd.DataFrame) -> pd.Period | None:
+    """The last month with data whose last day was imported, or the first
+    month with data when none is complete."""
+    if frame.empty:
+        return None
+
+    last_day = frame["date"].max()
+    complete = (last_day + pd.Timedelta(days=1)).to_period("M") - 1
+
+    return max(complete, frame["month"].min())
 
 
 def month_range(start: pd.Period, end: pd.Period) -> pd.PeriodIndex:

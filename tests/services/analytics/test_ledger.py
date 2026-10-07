@@ -38,7 +38,21 @@ def test_load_without_transactions(session: Session):
     frame = ledger.load(session)
 
     assert frame.empty
-    assert ledger.last_month(frame) is None
+    assert ledger.last_complete_month(frame) is None
+
+
+@pytest.mark.parametrize("days, expected", [
+    (["2026-01-31", "2026-02-10"], "2026-01"),
+    (["2026-01-10", "2026-02-28"], "2026-02"),
+    (["2026-02-10"], "2026-02"),
+])
+def test_last_complete_month(session: Session, days: list[str],
+                             expected: str):
+    session.add_all([make_transaction(date=datetime.fromisoformat(day))
+                     for day in days])
+    session.commit()
+
+    assert str(ledger.last_complete_month(ledger.load(session))) == expected
 
 
 @pytest.mark.parametrize("description, merchant", [

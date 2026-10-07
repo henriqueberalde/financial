@@ -74,8 +74,12 @@ def overview(frame: pd.DataFrame, month: pd.Period) -> Overview:
 
     return Overview(
         str(month),
-        *[_indicator(shown[column], reference[column])
-          for column in ("income", "expense", "result", "savings_rate")],
+        *[_indicator(shown[column], reference[column].mean())
+          for column in ("income", "expense", "result")],
+        # Average of the totals, so months with little income do not skew it
+        _indicator(shown["savings_rate"],
+                   _savings_rate(reference["result"].sum(),
+                                 reference["income"].sum())),
         [MonthFlow(str(period), round(row.income, 2), round(row.expense, 2),
                    round(row.result, 2))
          for period, row in shown.iterrows()],
@@ -148,16 +152,16 @@ def alerts(frame: pd.DataFrame, month: pd.Period) -> list[Alert]:
     return result
 
 
-def _indicator(values: pd.Series, reference: pd.Series) -> Indicator:
-    reference = reference.dropna()
-
-    return Indicator(
-        _rounded(values.iloc[-1]),
-        _rounded(reference.mean()) if len(reference) > 0 else None,
-        [_rounded(value) for value in values])
+def _indicator(values: pd.Series, average: float | None) -> Indicator:
+    return Indicator(_rounded(values.iloc[-1]), _rounded(average),
+                     [_rounded(value) for value in values])
 
 
-def _rounded(value: float) -> float | None:
+def _savings_rate(result: float, income: float) -> float | None:
+    return result / income if income > 0 else None
+
+
+def _rounded(value: float | None) -> float | None:
     return None if pd.isna(value) else round(float(value), 4)
 
 

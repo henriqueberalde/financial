@@ -2,7 +2,7 @@
 
 An application to organize my financial life.
 
-Interfaces: the CLI (`financial` command from `financial/cli.py`, with a REPL) and the Jupyter notebooks in `notebooks/`.
+Interfaces: the CLI (`financial` command from `financial/cli.py`, with a REPL), the web dashboard (`financial dashboard`: FastAPI in `financial/api/` serving the pages in `financial/web/`) and the Jupyter notebooks in `notebooks/`.
 
 ## Key Architecture Decisions
 
@@ -20,6 +20,9 @@ financial/
 ├── cli.py, settings.py, database.py, hashing.py
 ├── models/       # SQLAlchemy tables only: columns, relationships, simple helpers
 ├── services/     # business operations that use a session (categorization, adjustments, ...)
+│   └── analytics/ # dashboard aggregations over the ledger (pandas), returning dataclasses
+├── api/          # FastAPI app and routers: HTTP only, no business logic
+├── web/          # dashboard pages: plain ES modules + ECharts, no build step
 └── importers/
     ├── base.py
     ├── staging.py # inserts staged rows into transactions (shared by every importer)
@@ -29,7 +32,8 @@ notebooks/        # exploratory analyses
 data/             # personal statements and dumps, never versioned
 ```
 
-- Business logic goes into `services/` (or the bank package), never into models or the CLI
+- Business logic goes into `services/` (or the bank package), never into models, the CLI or the API routes
+- API routes return the services' dataclasses directly; the web pages only format and render what the API returns
 - A new bank or card is a new package under `financial/importers/`, reusing `financial/importers/staging.py` to merge
 - New models must be imported in `financial/models/__init__.py` so their tables are registered
 
@@ -56,4 +60,5 @@ When adding or changing features:
 - Tests use a fresh in-memory SQLite database per test (`tests/conftest.py`); never point tests to a real database
 - Keep SQL portable (ORM or standard SQL) so it runs on both MySQL and SQLite
 - Build test transactions with `tests/factories.py`
-- No integration or e2e tests for now: the dashboard is going to be rebuilt
+- API routes are tested with FastAPI's `TestClient` over the same in-memory database (`tests/api/`)
+- No e2e tests for the web pages for now

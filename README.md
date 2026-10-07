@@ -36,6 +36,7 @@ cp .env_example .env             # then set the database password in .env
 | Variable | Usage |
 |---|---|
 | `DATABASE_URL` | SQLAlchemy URL of the application database (CLI, notebooks and Alembic) |
+| `DASHBOARD_HOST`, `DASHBOARD_PORT` | Address of the dashboard (default `127.0.0.1:8000`) |
 
 Variables set in the environment take precedence over `.env`.
 Library settings and business rules live in the `constants.py` of the package they belong to (e.g. the Inter CSV layout and bank code in `financial/importers/inter/constants.py`).
@@ -85,6 +86,24 @@ The merge runs one invoice month at a time:
 
 Card purchases have no `balance`, since they do not change the checking account balance.
 
+### Dashboard
+```bash
+financial dashboard              # then open http://127.0.0.1:8000
+```
+
+The pages answer one question each. Filters live in the URL, so any view can be bookmarked:
+
+| Page | What it shows |
+|---|---|
+| Visão geral | Income, expense, result and savings rate of the month against the average of the 12 months before; monthly flow; account balance; expenses per sector; alerts (categories above average, new recurring expenses, price increases, uncategorized share above the target) |
+| Gastos | Drill-down of the expenses: sector > category > merchant (treemap) and year > month > day (timeline); top merchants; the transactions, whose category can be changed in place |
+| Recorrentes e anomalias | Merchants charged in most of the last 12 months, flagged as new or with a price increase; this month against the average per category; seasonality; largest expenses |
+| Dados | Categorization quality: uncategorized share per year and against the 5% target, how expenses got their category (rule, manual or none), the uncategorized merchants that weigh the most (with a button to create a rule), rule conflicts and rules that match nothing |
+
+Conventions shared with the notebook: investments (applications, redemptions and Tesouro Direto) are neither income nor expense; transactions with a `context` (trips and projects) are left out; `value` is used, so adjustments count. Pages open on the last complete month. The thresholds are in `financial/services/analytics/constants.py`.
+
+The API behind the pages is documented at `http://127.0.0.1:8000/docs`. The pages are plain JavaScript modules in `financial/web/`, with no build step; ECharts and the fonts load from CDNs.
+
 ### Jupyter Notebook
 Exploratory analyses live in `notebooks/`. With the virtual environment activated:
 
@@ -104,6 +123,9 @@ nbstripout --install
 | `financial/cli.py` | `financial` command (CLI and REPL) |
 | `financial/models/` | SQLAlchemy tables |
 | `financial/services/` | Business operations: categorization, adjustments, transaction contexts |
+| `financial/services/analytics/` | Dashboard aggregations over the transactions ledger |
+| `financial/api/` | REST API of the dashboard (FastAPI), one router per subject |
+| `financial/web/` | Dashboard pages (HTML, CSS and JavaScript modules) |
 | `financial/importers/staging.py` | Insert of staged rows into transactions, shared by the importers |
 | `financial/importers/inter/` | Banco Inter statement import: parsing, staging table, merge and constants |
 | `financial/importers/inter_credit_card/` | Banco Inter credit card invoices: parsing, staging table, month-by-month merge; invoices go in its `data/` folder (not versioned) |
@@ -162,11 +184,11 @@ To build sample transactions in tests, use `make_transaction` from `tests/factor
 * [x] Grouped graph report `many months`
 * [x] See every month in the same table
 * [x] Align numbers at right
-* [ ] Money format
+* [x] Money format
 * [ ] `all month` Hover on one month in all months` table to show percentage of diference between last value
 * [ ] `all month` Select a category and shows it on graph comparing all months and other things
 * [ ] `all month` Add total in every month
-* [ ] Set filters on url
+* [x] Set filters on url
 
 # Answer theese questions with features
 * [x] How much did I spent `filter month`?

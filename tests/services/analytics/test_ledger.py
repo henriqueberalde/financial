@@ -62,6 +62,7 @@ def test_last_complete_month(session: Session, days: list[str],
     ("COMPRA CARTAO - COMPRA no estabelecimento IFD*LETICIA", "IFD*LETICIA"),
     ("PAGAMENTO - 123 POSTO", "POSTO"),
     ("NETFLIX", "NETFLIX"),
+    ("MERCADOLIVRE PRODUTOS - Parcela 9/12", "MERCADOLIVRE PRODUTOS"),
 ])
 def test_merchant_name(description: str, merchant: str):
     assert ledger.merchant_name(description) == merchant

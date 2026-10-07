@@ -63,7 +63,8 @@ def kind_of(frame: pd.DataFrame) -> pd.Series:
 
 def merchant_name(description: str) -> str:
     """Merchant or person name from a bank statement description."""
-    name = description
+    # Installments of a purchase are charged by the same merchant
+    name = re.sub(r"(?i)\s+-\s+parcela \d+/\d+$", "", description)
     if ":" in name[:30]:
         name = re.sub(r"^[^:]{0,30}:\s*", "", name)
     else:
